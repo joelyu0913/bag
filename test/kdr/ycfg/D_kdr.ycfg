@@ -1,0 +1,19 @@
+# require("yao/A/cn/_common/data/sup_limit//onprc.ycfg")
+register_operation("norm", "yao.B.basic.sup.operations.op_norm.OpNorm")
+
+par_k = 5
+cpp_mod(
+    name=f"D_kdr_{par_k}",
+    cls="D_kdr",
+    par_k=par_k,
+    ops="rank|neut:industry|scale",
+)
+py_combo("xx", ["D_kdr_5"], "norm")
+
+pnl(
+    [
+        f"D_kdr_{par_k}",
+        (f"D_kdr_{par_k}", "limitadj|tsdemean:20"),
+        (f"D_kdr_{par_k}", "limit_ori"),
+    ]
+)

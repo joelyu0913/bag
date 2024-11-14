@@ -1,0 +1,12 @@
+# cpp_mod(name=f"D_kdr_c_1", cls="D_kdr_c", par_k=1, ops="rank|neut:cty|scale", stages=["prepare"])
+
+cpp_mod(name=f"D_kdr_c_5", cls="D_kdr_c", par_k=5, ops="rank|neut:cty|scale", stages=["prepare"])
+# cpp_mod(name=f"D_kdr_c_10", cls="D_kdr_c", par_k=10, ops="rank|neut:cty|scale", stages=["prepare"])
+
+pnl(
+    [
+        # "D_kdr_c_1",
+        "D_kdr_c_5",
+        # "D_kdr_c_10",
+    ]
+)

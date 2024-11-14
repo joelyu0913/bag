@@ -1,0 +1,6 @@
+py_mod(
+    name="Pf_long_BTC",
+    cls="yao.D.test.long_one.long_one.LongOne",
+    sids=[("BTC", 1)],
+    output="Pf_test/long_BTC",
+)

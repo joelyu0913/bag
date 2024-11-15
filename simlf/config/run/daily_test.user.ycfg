@@ -1,0 +1,5 @@
+require("daily_test.sys.ycfg", relative=True)
+
+opt(
+    user_cache="tmp/cache/test/cn/user",
+)

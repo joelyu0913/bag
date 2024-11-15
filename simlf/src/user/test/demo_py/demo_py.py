@@ -5,7 +5,7 @@ import sys
 import numba
 import numpy as np
 
-from yang.sim import Module
+from sim import Module
 from yao.lib.pycommon.oper import ts_mean
 from yao.lib.simm import Sim, apply_ops
 

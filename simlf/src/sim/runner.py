@@ -1,3 +1,4 @@
+import os
 import asyncio
 import functools
 import logging
@@ -6,9 +7,43 @@ from typing import Any
 
 from sim.scheduler import Scheduler
 from sim.worker import SubprocessWorker
+import yaml
+import pandas as pd
 
 IDLE_SLEEP_SECS = 0.002
 
+def create_env(config):
+    # check existing meta
+    meta = {}
+    meta["daily"] = config.get('daily', True)
+    meta["max_univ_size"] = config['max_univ_size']
+    meta["univ_start_datetime"] = config['univ_start_date'] if 'univ_start_date' in config else config['univ_start_datetime']
+    meta["univ_end_datetime"] = config['univ_end_date'] if 'univ_end_date' in config else config['univ_end_datetime']
+    meta["univ_indices"] = config.get('univ_indices', {})
+    meta["univ_indices_id_start"] = config['univ_indices_id_start']
+    meta["intraday_times"] = config.get('intraday_times', {})
+    meta["taq_times"] =  config['taq']['times']
+    meta["days_per_year"] = config['days_per_year']
+    meta["short_book_size"] = config['short_book_size']
+    meta["benchmark_index"] = config['benchmark_index']
+    dir_env = f"{config['sys_cache']}/env/"
+    os.makedirs(dir_env, exist_ok=True)
+    yaml.safe_dump(meta, open(f"{dir_env}/meta.yml", 'w'), sort_keys=False)
+    df = pd.read_csv(config['trade_dates'], header = None)
+    df = df[(int(config['univ_start_date']) <= df[0]) & (df[0] <= int(config['univ_end_date']))]
+    df.to_csv(f'{dir_env}/trade_dates', header=False, index=False)
+    
+    
+
+#   env->set_live(options.live);
+#   env->set_prod(options.prod);
+
+#   env->Initialize(config);
+#   if (!env->user_mode() && options.stages.count(RunStage::PREPARE)) {
+#     env->Build();
+#   } else {
+#     env->Load();
+#   }
 
 class Runner(object):
     def run(
@@ -21,14 +56,14 @@ class Runner(object):
         mod_deps = {}
         run_set = set(config.get("run_modules", []))
         for mod_config in config["modules"]:
-            if mod_config["lang"] != "py":
-                continue
             name = mod_config["name"]
             if len(run_set) > 0 and name not in run_set:
                 continue
 
             mods.append(name)
             mod_deps[name] = list(set(mod_config.get("deps", []) + ["base"]))
+        
+        create_env(config)
 
         scheduler = Scheduler(mods, mod_deps)
         loop = asyncio.get_event_loop()
@@ -36,9 +71,11 @@ class Runner(object):
         workers = [SubprocessWorker(f"worker_{i}", loop) for i in range(num_workers)]
         for i in range(num_workers):
             workers[i].start(config, run_options, mod_deps)
+        return
 
         idle_workers = deque(workers)
         logging.info(f"Running ({num_workers} threads)")
+        return
 
         def on_mod_done(worker, mod_name, fut):
             try:

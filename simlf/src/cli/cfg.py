@@ -87,7 +87,6 @@ class CfgContext(object):
         self,
         name: str,
         cls: str,
-        lang: str,
         stages: list[str] = ["intraday"],
         yaml_cfg: str = None,
         yaml_relative: bool = False,
@@ -98,7 +97,6 @@ class CfgContext(object):
         m = {
             "name": name,
             "class": cls,
-            "lang": lang,
             "stages": stages,
             "post": post,
             "tags": tags,
@@ -218,7 +216,6 @@ class CfgContext(object):
 def main(cfg_path: str) -> None:
     ctx = CfgContext()
     ctx.use(cfg_path)
-    print(yaml.dump(ctx.to_cfg()))
 
 
 if __name__ == "__main__":

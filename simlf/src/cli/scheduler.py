@@ -1,7 +1,7 @@
 import logging
 import os
 
-
+# control run process based on sys/user_cache/_rerun/
 class Scheduler(object):
     def __init__(self, config: dict, mods: list[str]):
         self.config = config
@@ -12,6 +12,7 @@ class Scheduler(object):
         self._preprocess()
         self.num_pending = len(mods)
 
+    # make sure deps exist
     def _preprocess(self) -> None:
         sys_cache = self.config.get("sys_cache")
         user_cache = self.config.get("user_cache")
@@ -51,26 +52,9 @@ class Scheduler(object):
             raise RuntimeError("deps not found")
 
     def pop_ready_modules(self) -> list[str]:
-        collected = set()
 
-        # DFS to collect modules
-        def collect(mod: str):
-            for dep in self._deps[mod]:
-                if dep in collected:
-                    continue
-                config = self._mods_config.get(dep, None)
-                if config is None:
-                    continue
-                if not collect(dep):
-                    return False
-            collected.add(mod)
-            return True
+        collected = list(self._mods_by_lang)
 
-        for mod in self._mods_by_lang:
-            if mod not in collected:
-                collect(mod)
-
-        collected = list(collected)
         for mod in collected:
             del self._mods_config[mod]
             self._mods_by_lang.remove(mod)

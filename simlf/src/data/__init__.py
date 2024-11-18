@@ -7,3 +7,4 @@ from .struct_array import StructArray
 from .ref_struct_array import RefStructArray
 from .graph import SparseGraph
 from .block_mat import BlockMat
+from .index import UNKNOWN_LIST_DI

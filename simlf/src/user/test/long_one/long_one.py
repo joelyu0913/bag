@@ -12,6 +12,7 @@ from yao.lib.simm import Sim, apply_ops
 
 class LongOne(Module):
     def run_impl(self):
+        logging.info(111)
         sim = Sim({"sys_cache": self.cache_dir.sys_dir, "user_cache": self.cache_dir.user_dir})
         # load params
         lookback = 24

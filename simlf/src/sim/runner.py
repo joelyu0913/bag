@@ -33,8 +33,6 @@ def create_env_old(config):
     yaml.safe_dump(meta, open(f"{dir_env}/meta.yml", 'w'), sort_keys=False)
     datetimes_ = DateTimeIndex.load(config['trade_dates'])
     df = pd.read_csv(config['trade_dates'], header = None)
-    print(df.head())
-    print(datetimes_)
     return 
     df_date = df[(int(config['univ_start_date']) <= df[0]) & (df[0] <= int(config['univ_end_date']))]
     path_trade_dates = f'{dir_env}/trade_dates'
@@ -54,8 +52,6 @@ def create_env_old(config):
     sec_master = config["sec_master"]
     logging.info(f"Using sec_master {sec_master}")
     df_sec = pd.read_csv(sec_master, sep='|')
-    print(df_sec)
-    print(df_sec.dtypes)
     last_univ_date = df_date[0].iloc[-1]
     datetime_multiplier = 1 if meta['daily'] else 10000
     for idx, line in df_sec.iterrows():
@@ -118,11 +114,9 @@ class Runner(object):
         workers = [SubprocessWorker(f"worker_{i}", loop) for i in range(num_workers)]
         for i in range(num_workers):
             workers[i].start(config, run_options, mod_deps)
-        return
 
         idle_workers = deque(workers)
         logging.info(f"Running ({num_workers} threads)")
-        return
 
         def on_mod_done(worker, mod_name, fut):
             try:

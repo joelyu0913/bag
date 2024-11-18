@@ -1,7 +1,7 @@
 import logging
 import sys, os
 import yaml
-from data import DateTimeIndex, UnivIndex, Array
+from data import DateTimeIndex, UnivIndex, Array, UNKNOWN_LIST_DI
 import pandas as pd
 import numpy as np
 
@@ -49,14 +49,11 @@ def env_init(config):
     # CheckMetaChanges(loaded_meta)
     # todo
     prev_datetimes = DateTimeIndex.load(f'{dir_env}/datetimes')
-    print(prev_datetimes)
 
   # build datetimes
   df = pd.read_csv(config['trade_dates'], header = None)
   df_date = df[(int(config['univ_start_date']) <= df[0]) & (df[0] <= int(config['univ_end_date']))]
   df_date.reset_index(drop=True, inplace=True)
-  print(df_date.head())
-  print('xxxxxxxx')
   datetimes_ = DateTimeIndex(np.array(df_date[0]))
 
 
@@ -78,14 +75,10 @@ def env_init(config):
   logging.info(f"Loaded {len(datetimes_)} datetimes")
 
   univ_ = UnivIndex.load(f'{dir_env}/univ') 
-  if len(univ_):
-    univ_.set_indices(univ_indices_, univ_indices_id_start_)
-    print(univ_.max_id(), max_univ_size_)
-    assert univ_.max_id() < max_univ_size_, "Max instrument id exceeds max_univ_size"
+  # if len(univ_):
+  univ_.set_indices(univ_indices_, univ_indices_id_start_)
+  assert univ_.max_id() < max_univ_size_, "Max instrument id exceeds max_univ_size"
 
-  days_per_year_ = int(config.get("days_per_year", 250))
-  short_book_size_ = bool(config.get("short_book_size", False))
-  benchmark_index_ = config.get("benchmark_index", "")
 
   start_dti_ = datetimes_.lower_bound(sim_start_datetime_)
   end_dti_ = datetimes_.upper_bound(sim_end_datetime_)
@@ -99,10 +92,9 @@ def env_init(config):
   last_univ_date = datetimes_.items[-1]
   datetime_multiplier = 1 if daily_ else 10000
   for idx, line in df_sec.iterrows():
-    print(idx)
     symbol = line['sid']
     list_date = int(line['list'])
-    delist_date = 0
+    delist_date = 99999999
 
     if str(line['delist']) != 'nan':
         delist_date = int(line['delist'])
@@ -120,16 +112,16 @@ def env_init(config):
 
     # all dates >= list_date should be included
     list_dti = datetimes_.lower_bound(list_date * datetime_multiplier)
-    # if list_dti == end_dti_: 
-    #   list_dti = UnivIndex::UNKNOWN_LIST_DI
+    if list_dti == end_dti_: 
+      list_dti = UNKNOWN_LIST_DI
     # newly added stock should not slip into historical dates, but live data
     # changes should also be permitted.
-    # list_start_dti = new_start_dti
-#     if live())
-#       list_start_dti = std::min(list_start_dti, datetimes_.LowerBound(sim_start_datetime_))
-#     ENSURE(univ_.Find(symbol) >= 0 || list_dti >= list_start_dti,
-#            "sec_master history changed, please delete cache and rebuild: new symbol {} {}", symbol,
-#            list_date)
+    list_start_dti = new_start_dti
+  #     if live())
+  #       list_start_dti = std::min(list_start_dti, datetimes_.LowerBound(sim_start_datetime_))
+  #     ENSURE(univ_.Find(symbol) >= 0 || list_dti >= list_start_dti,
+  #            "sec_master history changed, please delete cache and rebuild: new symbol {} {}", symbol,
+  #            list_date)
     delist_dti = end_dti_
     if delist_date > 0:
       # all dates >= delist_date should be excluded
@@ -146,33 +138,20 @@ def env_init(config):
   assert max_univ_size_ >= len(univ_), f"max_univ_size_ ({max_univ_size_}) is smaller than univ size ({len(univ_)})"
 
 
-#   meta.Set("univ_start_datetime", univ_start_datetime_)
-#   meta.Set("univ_end_datetime", univ_end_datetime_)
-#   meta.Set("univ_indices", univ_indices_)
-#   meta.Set("univ_indices_id_start", univ_indices_id_start_)
-#   meta.Set("intraday_times", intraday_times_.items())
-#   meta.Set("taq_times", .items())
-#   meta.Set("days_per_year", days_per_year_)
-#   meta.Set("short_book_size", short_book_size_)
-#   meta.Set("benchmark_index", benchmark_index_)
 
+  meta = {}
   meta["daily"] = daily_
   meta["max_univ_size"] = max_univ_size_
   meta["univ_start_datetime"] = univ_start_datetime_
   meta["univ_end_datetime"] = univ_end_datetime_
-  print(meta)
-  return
-  # meta["univ_start_datetime"] = config['univ_start_date'] if 'univ_start_date' in config else config['univ_start_datetime']
-  # meta["univ_end_datetime"] = config['univ_end_date'] if 'univ_end_date' in config else config['univ_end_datetime']
-  # meta["univ_indices"] = config.get('univ_indices', {})
-  # meta["univ_indices_id_start"] = config['univ_indices_id_start']
-  # meta["intraday_times"] = config.get('intraday_times', {})
-  # meta["taq_times"] =  config['taq']['times']
-  # meta["days_per_year"] = config['days_per_year']
-  # meta["short_book_size"] = config['short_book_size']
-  # meta["benchmark_index"] = config['benchmark_index']
+  meta["univ_indices"]= univ_indices_
+  meta["univ_indices_id_start"] =  univ_indices_id_start_
+  # meta["intraday_times"] = intraday_times_.items()
+  meta["intraday_times"] = config.get('intraday_times', {})
+  meta["taq_times"] =  config['taq']['times']
+  meta["days_per_year"] = int(config.get("days_per_year", 250))
+  meta["short_book_size"] = bool(config.get("short_book_size", False))
+  meta["benchmark_index"] = config.get("benchmark_index", "")
+  yaml.safe_dump(meta, open(meta_path, 'w'))
 
-#   auto meta_path = GetMetaPath()
-#   std::ofstream ofs(meta_path)
-#   ofs << meta.ToYamlString() << std::endl
-#   LOG_DEBUG("Saved {}", meta_path)
+  logging.info(f"Saved {meta_path}")

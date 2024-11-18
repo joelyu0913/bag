@@ -166,27 +166,26 @@ class UnivIndex(Index):
     def get_or_insert(self, di, symbol):
         if symbol in self.idx:
             ii = self.idx[symbol]
-            old_di = self.list_dis[idx]
-            # assert (old_di <= di || old_di == UNKNOWN_LIST_DI,
-            #         "list date changed, symbol: {}, old_di: {}, new_di: {}", symbol, old_di, di);
+            old_di = self.list_dis[ii]
+            assert (old_di <= di or old_di == UNKNOWN_LIST_DI), f"list date changed, symbol: {symbol}, old_di: {old_di}, new_di: {di}"
             if old_di == UNKNOWN_LIST_DI: 
                 self.list_dis[ii] = di
             return ii
         self.idx[symbol] = len(self.items)
         self.items.append(symbol)
-        np.append(self.list_dis, di)
+        self.list_dis = np.append(self.list_dis, di)
         assert len(self.items) < self.index_id_start, "UnivIndex size exceeds index_id_start"
         return len(self.items) - 1
 
     def save(self, path):
-        print(len(self.items), len(self.indices), len(self.list_dis))
+        print(len(self.items), len(self.idx), len(self.indices), len(self.list_dis))
         pd.DataFrame({0:self.items, 1:self.list_dis}).to_csv(path, sep=' ', header=False, index=False)
 
         if (len(self.indices) > 0):
             indices_path = path + ".indices"
             with open(indices_path, 'w') as wf:
                 wf.write(f'{self.index_id_start}\n')
-                for idx in self.indices_:
+                for idx in self.indices:
                     wf.write(f'{idx}\n')
 
    

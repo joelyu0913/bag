@@ -1,89 +1,92 @@
-
-
+import os, sys
+import yaml
 
 # TODO: the rules are very simple now and do not work in all cases, e.g. live
-class RerunManager:
-    struct ModMeta {
-        int64_t timestamp = 0;
-        int64_t start_date = 0;
-        int64_t end_date = 0;
+class ModMeta: 
+    def __init__(self):
+        self.timestamp = 0
+        self.start_date = 0
+        self.end_date = 0
 
-    int64_t start_date_ = 0;
-    int64_t end_date_ = 0;
+class RerunManager:
 
     def __init__(self,  workdir): 
-        workdir_ = workdir;
-        if (!fs::exists(workdir_)) fs::create_directories(workdir_);
+        self.workdir = workdir
+        os.makedirs(self.workdir, exist_ok=True)
+        self.mods = {}
 
-    def GetMetaPath(std::string_view mod):
-        return (workdir_ / mod).native() + ".yml";
+    def GetMetaPath(mod):
+        return (workdir_ / mod).native() + ".yml"
 
 
-        void SetDates(int64_t start_date, int64_t end_date) {
-        start_date_ = start_date;
-        end_date_ = end_date;
-        }
+    def SetDates(start_date, end_date):
+        self.start_date = start_date
+        self.end_date = end_date
 
-        bool CanSkipRun(std::string_view mod, const std::vector<std::string> &deps) {
-        auto meta = GetMeta(mod);
-        // rerun if different start_date or extend
-        if (meta.start_date != start_date_ || meta.end_date < end_date_) return false;
+    def CanSkipRun(mod, deps): 
+        meta = self.GetMeta(mod)
+        # rerun if different start_date or extend
+        if meta.start_date != start_date_ or meta.end_date < self.end_date: 
+            return false
 
-        for (auto &dep : deps) {
-            // rerun if any dep changes
-            auto dep_meta = GetMeta(dep);
-            if (dep_meta.timestamp > meta.timestamp) return false;
-        }
-        return true;
+        for dep in deps:
+            # rerun if any dep changes
+            dep_meta = self.GetMeta(dep)
+            if dep_meta.timestamp > meta.timestamp:
+                 return False 
+        return True
 
-    void RecordBeforeRun(std::string_view mod) {
-        auto meta_path = GetMetaPath(mod);
-        if (fs::exists(meta_path)) {
-            fs::remove(meta_path);
-        }
-    }
+    def RecordBeforeRun(mod):
+        meta_path = self.GetMetaPath(mod)
+        if os.path.exists(meta_path):
+            os.remove(file_path)
 
-    void RecordRun(std::string_view mod) {
-        SaveMeta(mod);
-    }
+    def RecordRun(mod):
+        SaveMeta(mod)
 
-    void SaveMeta(std::string_view mod) {
-        ModMeta meta;
-        meta.timestamp = GetTimestamp();
-        meta.start_date = start_date_;
-        meta.end_date = end_date_;
+    def SaveMeta(mod):
+        meta = ModMeta()
+        meta.timestamp = GetTimestamp()
+        meta.start_date = start_date_
+        meta.end_date = end_date_
 
-        Config yaml;
-        yaml.Set("timestamp", meta.timestamp);
-        yaml.Set("start_date", meta.start_date);
-        yaml.Set("end_date", meta.end_date);
-        std::ofstream ofs(GetMetaPath(mod));
-        ofs << yaml.ToYamlString();
-        ENSURE2(ofs.good());
+        yam= {}
+        yam.Set("timestamp", meta.timestamp)
+        yam.Set("start_date", meta.start_date)
+        yam.Set("end_date", meta.end_date)
+        yaml.safe_dump(yam, self.GetMetaPath(mod))
+        # std::ofstream ofs(GetMetaPath(mod))
+        # ofs << yam.ToYamlString()
 
-        std::lock_guard guard(mutex_);
-        mods_[mod] = meta;
+        # std::lock_guard guard(mutex_)
+        self.mods[mod] = meta
 
-    def GetMeta(std::string_view mod) {
+    def GetMeta(mod):
 
-        std::lock_guard guard(mutex_);
-        auto it = mods_.find(mod);
-        if (it != mods_.end()) return it->second;
+        # std::lock_guard guard(mutex_)
+        it = self.mods.find(mod)
+        if mod in self.mods:
+            return self.mods[mod]
 
-        ModMeta meta;
-        auto meta_path = GetMetaPath(mod);
-        if (fs::exists(meta_path)) {
-            try {
-            auto yaml = Config::LoadFile(meta_path);
-            meta.timestamp = yaml.Get<int64_t>("timestamp");
-            meta.start_date = yaml.Get<int64_t>("start_date");
-            meta.end_date = yaml.Get<int64_t>("end_date");
-            } catch (const std::exception &ex) {
-            LOG_ERROR("Failed to load meta: {}", meta_path);
-            meta = ModMeta();
-            }
-        }
-        std::lock_guard guard(mutex_);
-        auto ret = mods_.emplace(mod, meta);
-        return ret.first->second;
+        meta = ModMeta()
+        meta_path = self.GetMetaPath(mod)
+        if os.path.exists(meta_path):
+            try:
+                with open(meta_path, 'r') as file:
+                    yaml_data = yaml.safe_load(file)
+
+                meta.timestamp = yaml_data["timestamp"]
+                meta.start_date = yaml_data["start_date"]
+                meta.end_date = yaml_data["end_date"]
+
+            except Exception as ex:
+                logger.error(f"Failed to load meta: {meta_path}")
+                # If an error occurs, re-initialize meta to an empty ModMeta
+                meta = ModMeta()
+        # std::lock_guard guard(mutex_)
+        if mod in self.mods:
+            return False
+        else:
+            self.mods[mod] = meta
+            return True
 

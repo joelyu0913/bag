@@ -6,8 +6,8 @@ import numba
 import numpy as np
 
 from sim import Module
-from yao.lib.pycommon.oper import ts_mean
-from yao.lib.simm import Sim, apply_ops
+from user.lib.pycommon.oper import ts_mean
+from user.lib.simm import Sim, apply_ops
 
 
 class LongOne(Module):

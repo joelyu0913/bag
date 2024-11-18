@@ -178,7 +178,6 @@ class UnivIndex(Index):
         return len(self.items) - 1
 
     def save(self, path):
-        print(len(self.items), len(self.idx), len(self.indices), len(self.list_dis))
         pd.DataFrame({0:self.items, 1:self.list_dis}).to_csv(path, sep=' ', header=False, index=False)
 
         if (len(self.indices) > 0):

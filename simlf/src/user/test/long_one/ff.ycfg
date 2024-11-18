@@ -1,29 +1,29 @@
 py_mod(
     name="Pf_long_BTC",
-    cls="src.user.test.long_one.long_one.LongOne",
+    cls="user.test.long_one.long_one.LongOne",
     sids=[("BTC", 1)],
     output="Pf_test/long_BTC",
 )
 
-# py_mod(
-#     name="Pf_long_BTC2",
-#     cls="yao.D.test.long_one.long_one.LongOne",
-#     sids=[("BTC", 1)],
-#     output="Pf_test/long_BTC",
-# )
+py_mod(
+    name="Pf_long_BTC2",
+    cls="user.test.long_one.long_one.LongOne",
+    sids=[("BTC", 1)],
+    output="Pf_test/long_BTC2",
+)
 
-# py_mod(
-#     name="Pf_long_BTC3",
-#     cls="yao.D.test.long_one.long_one.LongOne",
-#     sids=[("BTC", 1)],
-#     output="Pf_test/long_BTC",
-#     deps=['Pf_long_BTC2']
-# )
+py_mod(
+    name="Pf_long_BTC3",
+    cls="user.test.long_one.long_one.LongOne",
+    sids=[("BTC", 1)],
+    output="Pf_test/long_BTC3",
+    deps=['Pf_long_BTC2']
+)
 
-# py_mod(
-#     name="Pf_long_BTC4",
-#     cls="yao.D.test.long_one.long_one.LongOne",
-#     sids=[("BTC", 1)],
-#     output="Pf_test/long_BTC",
-#     deps=['Pf_long_BTC3']
-# )
+py_mod(
+    name="Pf_long_BTC4",
+    cls="user.test.long_one.long_one.LongOne",
+    sids=[("BTC", 1)],
+    output="Pf_test/long_BTC4",
+    deps=['Pf_long_BTC3']
+)

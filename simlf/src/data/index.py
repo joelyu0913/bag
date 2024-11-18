@@ -5,7 +5,9 @@ from collections.abc import Callable
 from typing import Any
 
 import numpy as np
+import pandas as pd
 
+UNKNOWN_LIST_DI = 10000000
 
 class Index(object):
     def __init__(self, items: list[Any], path: str = None):
@@ -133,11 +135,12 @@ class UnivIndex(Index):
     def load(self, path: str) -> UnivIndex:
         univ = []
         list_dis = []
-        with open(path) as f:
-            for line in f:
-                symbol, date = line.split(" ")
-                univ.append(symbol)
-                list_dis.append(int(date))
+        if os.path.exists(path):
+            with open(path) as f:
+                for line in f:
+                    symbol, date = line.split(" ")
+                    univ.append(symbol)
+                    list_dis.append(int(date))
         indices_path = path + ".indices"
         if os.path.exists(indices_path):
             with open(indices_path) as f:
@@ -147,3 +150,43 @@ class UnivIndex(Index):
             index_id_start = 10000
             indices = []
         return UnivIndex(univ, np.array(list_dis, dtype=np.int32), indices, index_id_start, path)
+
+    def set_indices(self, indices, id_start):
+        self.index_id_start = id_start
+        for idx in self.indices: 
+            del self.idx[idx]
+        self.indices = indices
+        for i in range(len(self.indices)):
+            self.idx[self.indices[i]] = i + self.index_id_start
+    
+    
+    def max_id(self): 
+        return self.index_id_start + len(self.indices) - 1
+
+    def get_or_insert(self, di, symbol):
+        if symbol in self.idx:
+            ii = self.idx[symbol]
+            old_di = self.list_dis[idx]
+            # assert (old_di <= di || old_di == UNKNOWN_LIST_DI,
+            #         "list date changed, symbol: {}, old_di: {}, new_di: {}", symbol, old_di, di);
+            if old_di == UNKNOWN_LIST_DI: 
+                self.list_dis[ii] = di
+            return ii
+        self.idx[symbol] = len(self.items)
+        self.items.append(symbol)
+        np.append(self.list_dis, di)
+        assert len(self.items) < self.index_id_start, "UnivIndex size exceeds index_id_start"
+        return len(self.items) - 1
+
+    def save(self, path):
+        print(len(self.items), len(self.indices), len(self.list_dis))
+        pd.DataFrame({0:self.items, 1:self.list_dis}).to_csv(path, sep=' ', header=False, index=False)
+
+        if (len(self.indices) > 0):
+            indices_path = path + ".indices"
+            with open(indices_path, 'w') as wf:
+                wf.write(f'{self.index_id_start}\n')
+                for idx in self.indices_:
+                    wf.write(f'{idx}\n')
+
+   

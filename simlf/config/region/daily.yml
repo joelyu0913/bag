@@ -20,6 +20,14 @@ benchmark_index: 000905.SH
 days_per_year: 250
 short_book_size: False
 
+univ_indices: 
+  - "000905.SH"
+  - "000300.SH"
+  - "000016.SH"
+  - "000842.SH"
+  - "000852.SH"
+  - "932000.SH"
+
 taq:
   module: sup_taq
   times:

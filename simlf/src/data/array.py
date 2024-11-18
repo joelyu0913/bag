@@ -96,7 +96,7 @@ class Array(object):
     def mmap(
         path: str,
         writable: bool = False,
-        shape: Optional[list[int]] = None,
+        shape: Optional[tuple[int]] = None,
         dtype: Optional[np.dtype] = None,
         null_value: Any = None,
     ) -> Array:

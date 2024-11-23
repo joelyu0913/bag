@@ -7,9 +7,11 @@ from typing import Any
 
 import numpy as np
 import yaml
+import logging
 
 from data import DataCache, DateTimeIndex, TimeIndex, UnivIndex
 from sim.data_directory import DataDirectory
+from sim.rerun_manager import RerunManager
 
 DISPLAY_BOOK_SIZE = 100000
 
@@ -65,6 +67,12 @@ class Env(object):
         assert os.path.exists(self.cache_dir.sys_dir), "sys cache dir does not exist"
         self.data_cache = DataCache()
 
+        if self.user_mode:
+            self.rerun_manager = RerunManager(self.cache_dir.user_dir + "/_rerun")
+        else:
+            self.rerun_manager = RerunManager(self.cache_dir.sys_dir + "/_rerun")
+        logging.info(f'Running in {"user" if self.user_mode else "sys"} mode')
+
         meta_path = self.cache_dir.get_path("env", "meta.yml")
         with open(meta_path) as f:
             meta = yaml.safe_load(f)
@@ -100,6 +108,7 @@ class Env(object):
         self.days_per_year = meta["days_per_year"]
         self.short_book_size = meta["short_book_size"]
         self.benchmark_index = meta["benchmark_index"]
+        self.rerun_manager.set_dates(int(self.datetimes[self.start_dti]), int(self.datetimes[self.end_dti - 1]))
 
     @property
     def dates(self):

@@ -55,8 +55,8 @@ def run_worker_process(
     always_run_mods = set(config.get("always_run_modules", []))
 
     def run_mod(mod_name: str) -> None:
-        env.rerun_manager = None # todo
-        use_rerun_manager = env.rerun_manager is not None and not run_options["post"]
+        # env.rerun_manager = None # todo
+        use_rerun_manager = env.rerun_manager is not None 
         try:
             mod_config = mod_configs[mod_name]
             # check sys/user mod
@@ -76,9 +76,10 @@ def run_worker_process(
                 if mod_name not in always_run_mods and env.rerun_manager.can_skip_run(
                     mod_name, mod_deps[mod_name]
                 ):
-                    logging.debug(f"Skip module {mod_name}: already built")
+                    logging.info(f"Skip module {mod_name}: already built")
                     return
 
+            logging.debug(f"Running module {mod_name} on {worker_name}")
             logging.debug(f"Running module {mod_name} on {worker_name}")
             logging.debug(f"Making module {mod_name} on {worker_name}")
             mod_cls = import_attr(mod_config["class"])

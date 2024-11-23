@@ -12,9 +12,9 @@ from user.lib.simm import Sim, apply_ops
 
 class LongOne(Module):
     def run_impl(self):
-        logging.info(111)
         sim = Sim({"sys_cache": self.cache_dir.sys_dir, "user_cache": self.cache_dir.user_dir})
         # load params
+        logging.info(f'xxx {self.start_di} {self.end_di} {self.dates[self.start_di]} {self.dates[self.end_di - 1]}')
         lookback = 24
 
         if "output" in self.config:

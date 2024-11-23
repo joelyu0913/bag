@@ -7,7 +7,6 @@ import numpy as np
 
 
 def env_init(config):
-    user_mode_ = True
     if config.get("cache", ""):
         sys_cache = f'{config["cache"]}/sys'
         os.makedirs(sys_cahce_, exist_ok=True)

@@ -26,12 +26,36 @@ class Index(object):
 
     def find(self, key: Any) -> int:
         return self.idx.get(key, -1)
+    
+    def insert(self, key: Any) -> int:
+        if key in self.idx:
+            return self.idx[key]
+        self.idx[key] = len(self.items)
+        self.items.append(key)
+        return len(self.items) - 1
 
     @classmethod
     def load(self, path: str, item_type: Callable[[str], Any] = str) -> Index:
-        with open(path) as f:
-            items = [item_type(l) for l in f]
-        return Index(items, path)
+        if not os.path.exists(path):
+            return Index([], path)
+        else:
+            with open(path) as f:
+                items = [item_type(l) for l in f]
+            return Index(items, path)
+    
+#       virtual void Save() {
+#     fs::create_directories(fs::path(path_).parent_path());
+#     std::ofstream ofs(path_);
+#     for (auto &x : items_) ofs << x << '\n';
+#     ofs.flush();
+#     ENSURE(ofs.good(), "Failed to save {}", path_);
+#   }
+    def save(self):
+        os.makedirs(os.path.dirname(self.path), exist_ok=True)
+        with open(self.path, 'w') as wf:
+            for item in self.items:
+                wf.write(f'{item}\n')
+
 
 
 class IntIndex(object):

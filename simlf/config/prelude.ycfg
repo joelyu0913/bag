@@ -106,7 +106,7 @@ def pnl(alphas: list[Union[str, Tuple[str, str]]], **kwargs) -> None:
         inputs.append(alpha)
     py_mod(
         name=f"pnl-{uuid.uuid4()}",
-        cls="yao.B.basic.sup.SupPnl",
+        cls="basic.sup.sup_pnl.SupPnl",
         alphas=inputs,
         post=True,
         **kwargs,

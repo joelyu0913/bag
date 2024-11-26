@@ -1,0 +1,10 @@
+py_mod(
+    name="kdr_py_5",
+    cls="user.test.kdr_py.kdr_py.KdrPy",
+    lookback = 5,
+    output="test/kdr_py_5",
+)
+
+pnl(
+    ["test/kdr_py_5"],
+)

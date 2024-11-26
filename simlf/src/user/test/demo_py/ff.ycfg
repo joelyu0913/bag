@@ -1,5 +1,0 @@
-py_mod(
-    name="py_demo",
-    cls="yao.D.test.demo_py.demo_py.DemoPy",
-    output="py_demo",
-)

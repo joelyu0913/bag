@@ -1,0 +1,141 @@
+src/
+├── basic
+│   ├── cn_base
+│   │   ├── cn_base_std.py
+│   │   ├── ff.ycfg
+│   │   └── __pycache__
+│   │       └── cn_base_std.cpython-39.pyc
+│   ├── lib
+│   │   ├── corr.py
+│   │   ├── __init__.py
+│   │   ├── pnl2.py
+│   │   ├── pnl3.py
+│   │   ├── pnl_metrics
+│   │   │   ├── base.py
+│   │   │   ├── hedge.py
+│   │   │   ├── ic.py
+│   │   │   ├── ir.py
+│   │   │   ├── __pycache__
+│   │   │   │   ├── base.cpython-39.pyc
+│   │   │   │   ├── hedge.cpython-39.pyc
+│   │   │   │   ├── ic.cpython-39.pyc
+│   │   │   │   └── ir.cpython-39.pyc
+│   │   │   └── tcost.py
+│   │   ├── pnl.py
+│   │   ├── py_build
+│   │   │   ├── __init__.py
+│   │   │   ├── setup.py
+│   │   │   └── simm
+│   │   │       └── simm.py
+│   │   ├── __pycache__
+│   │   │   ├── __init__.cpython-39.pyc
+│   │   │   ├── pnl.cpython-39.pyc
+│   │   │   └── simm.cpython-39.pyc
+│   │   ├── pycommon
+│   │   │   ├── alphaloader.py
+│   │   │   ├── crypto.py
+│   │   │   ├── data2.py
+│   │   │   ├── data.py
+│   │   │   ├── fe.py
+│   │   │   ├── __init__.py
+│   │   │   ├── math.py
+│   │   │   ├── oper.py
+│   │   │   ├── __pycache__
+│   │   │   │   ├── data.cpython-39.pyc
+│   │   │   │   ├── __init__.cpython-39.pyc
+│   │   │   │   └── oper.cpython-39.pyc
+│   │   │   └── store.py
+│   │   ├── script.py
+│   │   ├── simm.py
+│   │   └── yl
+│   │       ├── algo.py
+│   │       └── trade.py
+│   ├── __pycache__
+│   │   └── cn_base_std.cpython-39.pyc
+│   └── sup
+│       ├── __pycache__
+│       │   └── sup_pnl.cpython-39.pyc
+│       └── sup_pnl.py
+├── cli
+│   ├── cfg.py
+│   ├── __pycache__
+│   │   ├── cfg.cpython-39.pyc
+│   │   ├── scheduler.cpython-39.pyc
+│   │   └── util.cpython-39.pyc
+│   ├── run.py
+│   ├── scheduler.py
+│   └── util.py
+├── data
+│   ├── array.py
+│   ├── block_mat.py
+│   ├── block_struct_vector.py
+│   ├── block_vector.py
+│   ├── data_cache.py
+│   ├── graph.py
+│   ├── index.py
+│   ├── __init__.py
+│   ├── null.py
+│   ├── __pycache__
+│   │   ├── array.cpython-39.pyc
+│   │   ├── block_mat.cpython-39.pyc
+│   │   ├── block_struct_vector.cpython-39.pyc
+│   │   ├── block_vector.cpython-39.pyc
+│   │   ├── data_cache.cpython-39.pyc
+│   │   ├── graph.cpython-39.pyc
+│   │   ├── index.cpython-39.pyc
+│   │   ├── __init__.cpython-39.pyc
+│   │   ├── null.cpython-39.pyc
+│   │   ├── ref_struct_array.cpython-39.pyc
+│   │   └── struct_array.cpython-39.pyc
+│   ├── ref_struct_array.py
+│   └── struct_array.py
+├── ext
+│   ├── ext.cpp
+│   ├── external_program.py
+│   ├── __init__.py
+│   ├── notebook.py
+│   └── __pycache__
+│       ├── __init__.cpython-39.pyc
+│       └── notebook.cpython-39.pyc
+├── _math
+│   ├── convert.h
+│   ├── helpers.h
+│   ├── __init__.py
+│   ├── np_ufuncs_1d.cpp
+│   ├── np_ufuncs_2d.cpp
+│   ├── np_ufuncs_3d.cpp
+│   ├── np_ufuncs.h
+│   ├── np_ufuncs_reduce.cpp
+│   └── ops.pyx
+├── sim
+│   ├── data_directory.py
+│   ├── env_init.py
+│   ├── env.py
+│   ├── expr_runner.py
+│   ├── __init__.py
+│   ├── module.py
+│   ├── operation.py
+│   ├── pnl.py
+│   ├── __pycache__
+│   │   ├── data_directory.cpython-39.pyc
+│   │   ├── env.cpython-39.pyc
+│   │   ├── env_init.cpython-39.pyc
+│   │   ├── __init__.cpython-39.pyc
+│   │   ├── module.cpython-39.pyc
+│   │   ├── rerun_manager.cpython-39.pyc
+│   │   ├── runner.cpython-39.pyc
+│   │   ├── scheduler.cpython-39.pyc
+│   │   └── worker.cpython-39.pyc
+│   ├── rerun_manager.py
+│   ├── runner.py
+│   ├── scheduler.py
+│   └── worker.py
+└── user
+    └── test
+        └── kdr_py
+            ├── ff.ycfg
+            ├── kdr_py.py
+            └── __pycache__
+                └── kdr_py.cpython-39.pyc
+
+28 directories, 110 files

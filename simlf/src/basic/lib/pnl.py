@@ -232,6 +232,7 @@ class PnlStats(object):
     def summarize(
         self, env: Env, metrics: pd.DataFrame, ranges: list[DiRange], **kwargs
     ) -> pd.DataFrame:
+    
         if len(ranges) == 0:
             return None
 
@@ -243,7 +244,7 @@ class PnlStats(object):
             config["book_size"] *= 2
         sum_metrics = []
         for begin, end in ranges:
-            range_metrics = metrics.iloc[begin:end]
+            range_metrics = metrics.iloc[begin:end] if end != -1 else metrics.iloc[begin:]
             range_sum = OrderedDict(
                 [
                     ("start_date", range_metrics.date.iloc[0]),

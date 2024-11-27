@@ -5,7 +5,7 @@ alpha_store_dir = "yao/A/_common/alpha_store"
 
 
 def add_default_signal(mod: str) -> str:
-    if "/" inmod:
+    if "/" in mod:
         return mod
     return mod + "/b_sig_op"
 

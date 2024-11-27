@@ -162,9 +162,6 @@ class CfgContext(object):
         self.exec_globals = {**self.exports, **kwargs}
         self.exec_globals["__file__"] = cfg_path
         exec(code, self.exec_globals)
-        
-        # print(cfg_py)
-        # print(test)
         # reset globals dict and add new exports
         self.exec_globals = orig_exec_globals
         self.exec_globals.update(self.exports)

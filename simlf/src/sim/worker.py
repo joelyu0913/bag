@@ -55,8 +55,8 @@ def run_worker_process(
     always_run_mods = set(config.get("always_run_modules", []))
 
     def run_mod(mod_name: str) -> None:
-        # env.rerun_manager = None # todo
-        use_rerun_manager = env.rerun_manager is not None 
+        # use_rerun_manager = env.rerun_manager is not None 
+        use_rerun_manager = env.rerun_manager is not None and not run_options["post"]
         try:
             mod_config = mod_configs[mod_name]
             # check sys/user mod

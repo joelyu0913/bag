@@ -3,6 +3,8 @@ import sys
 
 import numba
 import numpy as np
+import warnings
+warnings.filterwarnings("ignore")
 
 from sim import Module
 from basic.lib.pycommon.oper import ts_mean, c_demean

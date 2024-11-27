@@ -49,6 +49,7 @@ def setup_logger(level: str, log_file: Optional[str]) -> None:
 @click.option("--module", "-m", multiple=True, type=str, help="modules to run")
 @click.option("--start-date", default=None, type=int, help="set sim_start_date")
 @click.option("--end-date", default=None, type=int, help="set sim_end_date")
+@click.option("--post", is_flag=True, help="Run post processing only", show_default=True)
 @click.option("--live", is_flag=True, help="live mode", show_default=True)
 @click.option("--prod", is_flag=True, help="production mode", show_default=True)
 @click.option(
@@ -64,6 +65,7 @@ def main(
     module: tuple[str],
     start_date: int,
     end_date: int,
+    post: bool,
     live: bool,
     prod: bool,
     always_run: tuple[str],
@@ -124,12 +126,11 @@ def main(
     cfg_path = f"{current_run_dir}/cfg.yml"
     base_cfg_path = f"{current_run_dir}/cfg.base.yml"
 
-    def run_modules(mods: list[str]) -> None:
+    def run_modules(mods: list[str], post: bool = False) -> None:
         from sim import Runner
         from sim.env import RunStage
         if len(mods) == 0:
             return
-
         scheduler = Scheduler(gen_cfg, mods)
 
         while not scheduler.finished:
@@ -149,6 +150,7 @@ def main(
             options = {
                 "live": live,
                 "prod": prod,
+                "post": post,
             }
             if stage == "all":
                 options["stages"] = [
@@ -166,26 +168,33 @@ def main(
             runner.run(
                 gen_cfg,
                 options,
-                num_threads,
+                num_threads if not post else 1,
+                # config_path=cfg_path,
             )
 
     skip_mods = set(gen_cfg.get("skip_modules", []))
     mods_to_run = []
+    post_mods_to_run = []
     only_run_modules = module
     for mod in modules:
         if len(only_run_modules) > 0 and mod["name"] not in only_run_modules:
             continue
         if mod["name"] in skip_mods:
             continue
-        mods_to_run.append(mod["name"])
-    if len(mods_to_run) == 0:
+        if mod["post"]:
+            post_mods_to_run.append(mod["name"])
+        else:
+            mods_to_run.append(mod["name"])
+    if len(mods_to_run) == 0 and len(post_mods_to_run) == 0:
         logging.info("No modules to run")
         return
 
     with open(base_cfg_path, "w") as f:
         yaml.dump(gen_cfg, f, Dumper=yaml.CDumper)
     logging.info(f"Dumped {base_cfg_path}")
-    run_modules(mods_to_run)
+    if not post:
+        run_modules(mods_to_run)
+    run_modules(post_mods_to_run, True)
 
 
 if __name__ == "__main__":

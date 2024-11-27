@@ -1,0 +1,28 @@
+for idx in [300, 500, 1000]:
+	py_mod(
+	    name=f"sup_univ_csi{idx}",
+	    cls="basic.sup.univ_index.sup_univ_index.SupUnivIndex",
+	    output_univ=f"sup_univ/csi{idx}",
+	    output_member=f"sup_univ/csi{idx}_member",
+	    backfill_date=20200106,
+	    path_fmt=f"/export/data/dao_data/cn/index_weight/csi{idx}/{{yyyy}}/{{mm}}/csi{idx}_{{yyyy}}{{mm}}{{dd}}.csv",
+	)
+
+# cpp_mod(
+#     name="sup_univ_ctop800x",
+#     cls="SupUnivMerge",
+#     stages=["prepare"],
+#     par_univ="sup_univ/ctop800x",
+#     par_include=["sup_univ/csi300x", "sup_univ/csi500x"],
+#     deps=["sup_univ_csi300x", "sup_univ_csi500x"],
+# )
+# 
+# cpp_mod(
+#     name="sup_univ_ctop1800x",
+#     cls="SupUnivMerge",
+#     stages=["prepare"],
+#     par_univ="sup_univ/ctop1800x",
+#     par_include=["sup_univ/ctop800x", "sup_univ/csi1000x"],
+#     deps=["sup_univ_ctop800x", "sup_univ_csi1000x"],
+# )
+

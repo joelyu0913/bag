@@ -1,0 +1,7 @@
+py_mod(
+    name=f"post_ana",
+    cls="user.post_ana.post_ana.PostAna",
+    start_date = 20241101,
+    end_date = 20241109,
+    post=True,
+)

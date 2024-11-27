@@ -118,7 +118,7 @@ class PostAna(Module):
                     pdf.add_page()
                     pdf.set_font("Arial", size=16)
                     if index == 'all':
-                        pdf.cell(0, 10, txt="Post-Trading Daily Report: CN", ln=True, align='C')
+                        pdf.cell(0, 10, txt="Market Report: CN", ln=True, align='C')
                     else:
                         pdf.cell(0, 10, txt=" --- ", ln=True, align='C')
                     pdf.cell(20, 10, txt=index, ln=True, align='C')
@@ -149,5 +149,5 @@ class PostAna(Module):
                     # pdf.set_y(y_gap)
                     pdf.image(f"{output_dir}/{index}.png", x=20, y=y_gap, h=height)
 
-                pdf.output(f"{output_dir}/Report_{cur_date}.pdf") 
+                pdf.output(f"{output_dir}/market_cn_{cur_date}.pdf") 
                 logging.info(f"Post report generated for {cur_date}")

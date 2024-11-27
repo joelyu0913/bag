@@ -26,7 +26,7 @@ class CnBaseStd(Module):
     env = self.env
 
     indices = {}
-    for idx in env.univ:
+    for idx in env.univ_indices:
       indices[idx] = env.univ.find(idx)
 
     open_arr = self.write_array("base/open")
@@ -146,6 +146,7 @@ class CnBaseStd(Module):
             updated_idx += 1
           else:
             updated_stock += 1
+
       except Exception as e:
         logging.error(f"Failed to load {raw_prc_path}: {e}")
 

@@ -121,37 +121,12 @@ def main(
             set(gen_cfg.get("always_run_modules", []) + always_run_modules)
         )
 
-    def run_py(cfg: dict, cfg_path: str) -> None:
-        from sim import Runner
-        from sim.env import RunStage
-
-        options = {
-            "live": live,
-            "prod": prod,
-        }
-        if stage == "all":
-            options["stages"] = [
-                RunStage.PREPARE,
-                RunStage.OPEN,
-                RunStage.INTRADAY,
-                RunStage.EOD,
-            ]
-        else:
-            stage_val = RunStage.parse(stage)
-            if stage_val == RunStage.ERROR:
-                raise RuntimeError(f"invalid stage {stage}")
-            options["stages"] = [stage_val]
-        runner = Runner()
-        runner.run(
-            cfg,
-            options,
-            num_threads,
-        )
-
     cfg_path = f"{current_run_dir}/cfg.yml"
     base_cfg_path = f"{current_run_dir}/cfg.base.yml"
 
     def run_modules(mods: list[str]) -> None:
+        from sim import Runner
+        from sim.env import RunStage
         if len(mods) == 0:
             return
 
@@ -170,7 +145,29 @@ def main(
                 yaml.dump({"run_modules": ready_mods}, f, Dumper=yaml.CDumper)
             logging.info(f"Generated config file {cfg_path}")
             gen_cfg["run_modules"] = ready_mods
-            run_py(gen_cfg, cfg_path)
+
+            options = {
+                "live": live,
+                "prod": prod,
+            }
+            if stage == "all":
+                options["stages"] = [
+                    RunStage.PREPARE,
+                    RunStage.OPEN,
+                    RunStage.INTRADAY,
+                    RunStage.EOD,
+                ]
+            else:
+                stage_val = RunStage.parse(stage)
+                if stage_val == RunStage.ERROR:
+                    raise RuntimeError(f"invalid stage {stage}")
+                options["stages"] = [stage_val]
+            runner = Runner()
+            runner.run(
+                gen_cfg,
+                options,
+                num_threads,
+            )
 
     skip_mods = set(gen_cfg.get("skip_modules", []))
     mods_to_run = []

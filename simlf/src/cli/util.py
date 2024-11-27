@@ -87,3 +87,14 @@ def configure_logging(level: str, log_file: Optional[str] = None) -> None:
 
     numba_logger = logging.getLogger("numba")
     numba_logger.setLevel(logging.WARNING)
+
+def in_notebook() -> bool:
+    try:
+        shell = get_ipython().__class__.__name__
+        if shell == "ZMQInteractiveShell":
+            # Jupyter notebook or qtconsole
+            return True
+        else:
+            return False
+    except NameError:
+        return False

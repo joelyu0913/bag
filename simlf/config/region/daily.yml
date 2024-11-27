@@ -10,7 +10,6 @@ trade_dates: $dataroot/env/trade_dates
 sec_master: $dataroot/env/sec_master/sec_master
 raw_prc_file: $dataroot/prod/basedata/stock/%Y/%m/%Y%m%d.gz
 index_file: $dataroot/prod/basedata/index/%Y/%m/%Y%m%d.gz
-# index_file: $dataroot/std/basedata/index/merge_plus_x/%Y/%m/%Y%m%d.gz
 cut_mode: cut
 cut_time: "1445"
 trade_book_size: 1e7

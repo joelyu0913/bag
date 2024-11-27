@@ -1,5 +1,0 @@
-require("daily.sys.ycfg", relative=True)
-
-opt(
-    user_cache="tmp/cache/cn/user",
-)

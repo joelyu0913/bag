@@ -5,7 +5,7 @@ alpha_store_dir = "yao/A/_common/alpha_store"
 
 
 def add_default_signal(mod: str) -> str:
-    if "/" in mod:
+    if "/" inmod:
         return mod
     return mod + "/b_sig_op"
 
@@ -22,11 +22,6 @@ def _mod(
         kwargs["ops"] = ops
     mod(name=name, deps=list(set(deps)), lang=lang, **kwargs)
     return name
-
-
-def cpp_mod(**kwargs) -> str:
-    return _mod(lang="cpp", **kwargs)
-
 
 def py_mod(**kwargs) -> str:
     return _mod(lang="py", **kwargs)
@@ -134,9 +129,6 @@ def pnl_crypto(
     )
 
 
-def check(signals: list[str], par_cut: float = 1e-6) -> None:
-    cpp_mod(name="sys_check", cls="sys_check", par_sigs=signals, par_cut=par_cut, post=True)
-
 
 def dummy(name: str, **kwargs) -> str:
     py_mod(name=name, cls="yang.sim.Module", **kwargs)
@@ -181,7 +173,6 @@ def py_fi(fi_path):
     return mods, outputs
 
 
-export("cpp_mod", cpp_mod)
 export("py_mod", py_mod)
 export("combo", combo)
 export("combo_mean", combo_mean)
@@ -189,20 +180,10 @@ export("py_combo", py_combo)
 export("py_ops", py_ops)
 export("pnl", pnl)
 export("pnl_crypto", pnl_crypto)
-export("check", check)
 export("dummy", dummy)
 export("load_yaml", load_yaml)
 export("py_link", py_link)
 export("py_fi", py_fi)
-
-
-def test():
-    use(f"{alpha_store_dir}/create_raw/_all.ycfg", local_globals=globals())
-    print(PV_mods)
-
-
-export("test", test)
-
 
 def pf_alloc(name, pfs, output, **kwargs):
     ll = []

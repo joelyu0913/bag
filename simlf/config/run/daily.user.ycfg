@@ -1,5 +1,6 @@
 require("daily.sys.ycfg", relative=True)
 
 opt(
-    user_cache="tmp/cache/cn/user",
+    sys_cache="tmp/cache/cn_/sys",
+    user_cache="tmp/cache/cn_/user",
 )

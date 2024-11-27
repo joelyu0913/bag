@@ -1,9 +1,0 @@
-require("yao/config/prelude.ycfg")
-
-lib("lib/libyao.so")
-
-use_yaml("daily.yml", relative=True)
-
-
-export("region", "cn")
-export("alpha_store_dir", "yao/A/_common/alpha_store")

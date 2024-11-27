@@ -11,7 +11,7 @@ from numba import njit
 from tabulate import tabulate
 
 from data import Array
-from ext import in_notebook
+from cli.util import in_notebook
 from basic.lib.pycommon.data import round_float
 
 DiRange = tuple[int, int]

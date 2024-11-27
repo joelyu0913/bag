@@ -12,7 +12,7 @@ from tabulate import tabulate
 
 from data import Array
 from sim import DISPLAY_BOOK_SIZE, Env
-from ext import in_notebook
+from cli.util import in_notebook
 # from B.basic.operation_manager import OperationManager
 
 """

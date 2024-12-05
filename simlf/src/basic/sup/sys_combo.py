@@ -6,7 +6,7 @@ from data import Array
 
 # from yao.B.basic.base_daily import BaseDaily
 from sim import Module
-# from lib.pnl import OperationManager
+from basic.operation_manager import OperationManager
 
 
 @njit(
@@ -37,7 +37,7 @@ class SysCombo(Module):
                 sig_raw[self.start_di : self.end_di, :], sig[self.start_di : self.end_di, :], wt
             )
 
-        if ops != "" and False:
+        if ops != "":
             if output:
                 sig_op = self.write_array(output, null_value=np.nan)
             else:

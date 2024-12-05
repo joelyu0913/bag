@@ -17,6 +17,6 @@ py_combo(
     [
         *[f"M_lgbm_{i}_pred/b_sig" for i in range(1)],
     ],
-    # "expdecay:0.3|neut:cty|scale",
+    "expdecay:0.3|neut:cty|scale",
 )
-pnl(['M_lgbm_pred/b_sig'])
+# pnl([('M_lgbm_pred/b_sig', 'aa|bb')])

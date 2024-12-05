@@ -7,7 +7,7 @@ sys_cache=tmp/cache/cn/sys
 user_cache=tmp/cache/cn/user
 model_dir=tmp/cache/cn/model
 
-for i in {0..9}; do
+for i in {0..0}; do
   ./scripts/prophet/train.py --workdir $model_dir/lgbm/grp_lgbm_kdr/$i \
     --config scripts/prophet/config/train_lgbm_addlimit.yml  \
     --inds src/user/kdr_py/inds_200.yml \

@@ -1,6 +1,7 @@
 from sim import Module
 from basic.lib.simm import Sim, apply_ops
-
+import numpy as np
+import logging
 
 class SupFretRawCNEQ(Module):
     def run_impl(self):
@@ -28,7 +29,7 @@ class SupFretRawCNEQ(Module):
             # for di in range(sim.start_di, sim.end_di - window):
             #     for ii in range(sim.max_univ_size):
             #         fret[di, ii] = adj_close[di + window, ii] / adj_close[di, ii] - 1
-            fret[du_s] = adj_close[du_e] / adj_close[du_s] - 1
+            fret[du_s] = adj_close[du_e] / adj_close[du_s] - 1.
         elif v[0] == "index":
             idx = sim.univ.index_id_start() + int(v[1])
             for di in range(sim.start_di, sim.end_di - window):

@@ -208,17 +208,16 @@ class CnBaseStd(Module):
     for ii in range(env.max_univ_size):
       cumadj_arr[0, ii] = 1.0
 
-    du = (slice(self.start_di, self.end_di), slice(env.max_univ_size))
-    if self.start_di == 0:
-      cumadj_arr[self.start_di] = 1.0
-      ret_arr[self.start_di] = np.nan
-    else:
-      cumadj_arr[self.start_di] = cumadj_arr[self.start_di - 1] * adj_arr[self.start_di]
-      ret_arr[self.start_di] = close_arr[self.start_di] * adj_arr[self.start_di] / close_arr[self.start_di - 1] - 1
     
-    cumadj_arr[self.start_di+1:self.end_di] = cumadj_arr[self.start_di:self.end_di-1] * adj_arr[self.start_di+1:self.end_di]
-    ret_arr[self.start_di+1:self.end_di] = close_arr[self.start_di+1:self.end_di] * adj_arr[self.start_di+1:self.end_di] / close_arr[self.start_di:self.end_di-1] - 1
+    for di in range(self.start_di, self.end_di):
+      if di == 0:
+        cumadj_arr[di] = 1.0
+        ret_arr[di] = np.nan  
+      else:
+        cumadj_arr[di] = cumadj_arr[di-1] * adj_arr[di]
+        ret_arr[di] = close_arr[di] * adj_arr[di] / close_arr[di-1] - 1
 
+    du = (slice(self.start_di, self.end_di), slice(env.max_univ_size))
     adj_open_arr[du] = open_arr[du] * cumadj_arr[du]
     adj_close_arr[du] = close_arr[du] * cumadj_arr[du]
     adj_high_arr[du] = high_arr[du] * cumadj_arr[du]

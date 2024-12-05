@@ -1,0 +1,21 @@
+require("yao/A/cn/close/expr_ind/ta/expr_ind_ta_cninfo.ycfg")
+require("yao/A/_common/M/ycfg/model.ycfg")
+
+ops_ = "neut:cty|scale"
+
+for i in range(10):
+    model(
+        name=f"M_lgbm_ta_cninfo_350__{i}_pred_cninfo",
+        model_dir=f"$model_dir/lgbm/grp_lgbm_ta_cninfo_350__v1/{i}",
+        inds_path=f"{alpha_store_dir}/FI/cn/MI/MI_ta_cninfo_350.yml",
+        ops=ops_,
+        deps=expr_ind_ta_cninfo_mods,
+    )
+
+py_combo(
+    "M_lgbm_ta__cninfo",
+    [
+        *[f"M_lgbm_ta_cninfo_350__{i}_pred_cninfo" for i in range(10)],
+    ],
+    "expdecay:0.3|neut:cty|scale",
+)

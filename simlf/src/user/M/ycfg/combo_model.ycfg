@@ -1,0 +1,52 @@
+require("model.ycfg", relative=True)
+
+
+def combo_model(mod_type, model_dir, inds_path, deps, ops=None, univ=None):
+    for i in range(10):
+        model(
+            name=f"{mod_type}__{i}",
+            model_dir=f"{model_dir}/{i}",
+            inds_path=inds_path,
+            deps=deps,
+            univ=univ,
+        )
+
+    combo_mean(
+        f"C_{mod_type}",
+        [f"{mod_type}__{i}/b_sig" for i in range(10)],
+        ops=ops,
+        deps=[f"{mod_type}__{i}" for i in range(10)],
+    )
+
+
+def combo_mpred(
+    mod_name, model_dir, fi_name, fi_dir, fi_ycfg=None, univ=None, ops1=None, ops2=None, deps=[]
+):
+    if fi_ycfg is None:
+        fi_ycfg = f"{fi_dir}/{fi_name}.ycfg"
+
+    use(fi_ycfg, local_globals=globals())
+    for i in range(10):
+        model(
+            name=f"_{mod_name}__{i}",
+            model_dir=f"{model_dir}/{i}",
+            inds_path=f"{fi_dir}/{fi_name}.yml",
+            univ=univ,
+            ops=ops1,
+            deps=[*eval(f"{fi_name}_mods"), *deps],
+        )
+
+    if ops1 is None:
+        targ = "b_sig"
+    else:
+        targ = "b_sig_op"
+
+    combo_mean(
+        mod_name,
+        [f"_{mod_name}__{i}/{targ}" for i in range(10)],
+        ops=ops2,
+    )
+
+
+export("combo_model", combo_model)
+export("combo_mpred", combo_mpred)

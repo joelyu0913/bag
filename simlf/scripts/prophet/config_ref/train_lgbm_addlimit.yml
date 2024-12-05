@@ -1,5 +1,5 @@
 data:
-  target: ext/fret_raw_1
+  target: ext/fret_index_0_1_1_10
   target_len: 1
   features: []
   min_valid_ratio: 0.7

@@ -122,7 +122,7 @@ class Sim:
             config["user_cache"] = self.user_cache
         else:
             self.user_cache = config["user_cache"]
-        self.env = Env(config)
+        self.env = Env(config, False)
         self.univ = self.env.univ
         self.dates = self.env.dates
         self.dates_size = self.env.dates_size

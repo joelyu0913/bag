@@ -48,7 +48,7 @@ def _upgrade_meta(meta: dict):
 
 
 class Env(object):
-    def __init__(self, config: dict):
+    def __init__(self, config: dict, verbose: bool = True):
         self.config = config
         if "user_cache" in config:
             if not config["sys_cache"]:
@@ -71,7 +71,9 @@ class Env(object):
             self.rerun_manager = RerunManager(self.cache_dir.user_dir + "/_rerun")
         else:
             self.rerun_manager = RerunManager(self.cache_dir.sys_dir + "/_rerun")
-        logging.info(f'Running in {"user" if self.user_mode else "sys"} mode')
+        
+        if verbose:
+            logging.info(f'Running in {"user" if self.user_mode else "sys"} mode')
 
         meta_path = self.cache_dir.get_path("env", "meta.yml")
         with open(meta_path) as f:

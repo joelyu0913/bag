@@ -1,5 +1,6 @@
 set -e
 
+# python src/cli/run.py --cfg config/region/daily.ycfg --cfg config/run/daily.sys.ycfg --cfg src/basic/sup/fret/ff.ycfg $*
 # python src/cli/run.py --cfg config/region/daily.ycfg --cfg config/run/daily.user.ycfg --cfg src/user/kdr_py/ff_ml.ycfg -t 16  $*
 
 sys_cache=tmp/cache/cn/sys

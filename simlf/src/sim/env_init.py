@@ -8,7 +8,7 @@ import numpy as np
 
 def env_init(config):
     if config.get("cache", ""):
-        sys_cache = f'{config["cache"]}/sys'
+        sys_cache_ = f'{config["cache"]}/sys'
         os.makedirs(sys_cahce_, exist_ok=True)
     elif config.get("sys_cache", ""):
         sys_cache_ = config["sys_cache"]

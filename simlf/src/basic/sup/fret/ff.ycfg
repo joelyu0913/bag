@@ -1,0 +1,9 @@
+days = [1, 3, 5, 10, 20, 40, 60, 80, 120]
+days = [1]
+for day in days:
+    py_mod(
+        name=f"Sup_fret_CNEQ_{day}__raw",
+        cls="basic.sup.fret.raw_CNEQ.SupFretRawCNEQ",
+        window=day,
+        stages=["prepare"],
+    )

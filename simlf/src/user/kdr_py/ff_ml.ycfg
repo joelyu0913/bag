@@ -1,0 +1,7 @@
+for i in range(200):
+	py_mod(
+	    name=f"kdr_py_ml_{i}",
+	    cls="user.kdr_py.kdr_py.KdrPy",
+	    lookback = i,
+	    output=f"ml/kdr_py_{i}",
+	)

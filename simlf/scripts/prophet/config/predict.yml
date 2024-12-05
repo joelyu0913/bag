@@ -1,0 +1,4 @@
+gpu: 0
+num_threads: 1
+batch_size: 512
+data_workers: 4

@@ -1,0 +1,32 @@
+data:
+  target: BE_oret_fwd_1__csi500_addlimit/data
+  target_len: 1
+  features: []
+  min_valid_ratio: 0.7
+  roll_years:
+    train: 4
+    valid: 0
+    pred: 1
+    train_from_start: true
+
+preprocess:
+  lookback: 30
+  axis: [stock, time, value]
+  features:
+    - type: CsStdScaler
+      axis: stock
+      center: false
+    - type: FFillSmoother
+      axis: time
+      horizon: 30
+    - type: FillNA
+      fill_value: 0
+
+model:
+  type: prophet.ml.MLPRegressor
+  hidden_layer_sizes: [16, 16, 8, 8]
+  activation: "relu"
+  solver: "adam"
+  alpha: 0.0002
+  learning_rate_init: 0.0002
+  max_iter: 80

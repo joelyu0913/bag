@@ -1,0 +1,63 @@
+# py_mod(
+#     name="kdr_py_1",
+#     cls="user.kdr_py.kdr_py.KdrPy",
+#     lookback = 1,
+#     output="test/kdr_py_1",
+# )
+# py_mod(
+#     name="kdr_py_5",
+#     cls="user.kdr_py.kdr_py.KdrPy",
+#     lookback = 5,
+#     output="test/kdr_py_5",
+# )
+
+# py_mod(
+#     name="kdr_py_10",
+#     cls="user.kdr_py.kdr_py.KdrPy",
+#     lookback = 10,
+#     output="test/kdr_py_10",
+# )
+# pnl(
+#     ["test/kdr_py_1",
+#     "test/kdr_py_5",
+#     "test/kdr_py_10"],
+# )
+
+for i in range(1, 5):
+    py_mod(
+        name=f"kdr_py_{i}",
+        cls="user.kdr_py.kdr_py.KdrPy",
+        lookback = i,
+        output=f"test/kdr_py_{i}",
+    )
+
+for i in range(5, 7):
+    py_mod(
+        name=f"kdr_py_{i}",
+        cls="user.kdr_py.kdr_py.KdrPy",
+        lookback = i,
+        output=f"test/kdr_py_{i}",
+        deps=[f"kdr_py_{i-4}"]
+    )
+
+for i in range(7, 9):
+    py_mod(
+        name=f"kdr_py_{i}",
+        cls="user.kdr_py.kdr_py.KdrPy",
+        lookback = i,
+        output=f"test/kdr_py_{i}",
+        deps=[f"kdr_py_{i-2}"]
+    )
+
+for i in range(9, 11):
+    py_mod(
+        name=f"kdr_py_{i}",
+        cls="user.kdr_py.kdr_py.KdrPy",
+        lookback = i,
+        output=f"test/kdr_py_{i}",
+        deps=[f"kdr_py_{i-6}"]
+    )
+
+pnl(
+    [f"test/kdr_py_{i}" for i in range(1, 11)]
+)

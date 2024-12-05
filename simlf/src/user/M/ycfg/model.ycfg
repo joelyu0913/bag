@@ -6,7 +6,7 @@ predict_config = resolve_relative_path("predict.yml")
 def model(name, model_dir, inds_path=None, **kwargs):
     py_mod(
         name=name,
-        cls="yao.B.basic.M.Model",
+        cls="basic.M.Model",
         model_dir=model_dir,
         predict_config=predict_config,
         inds_path=inds_path,
@@ -18,7 +18,7 @@ def model(name, model_dir, inds_path=None, **kwargs):
 def model_grf(name, model_dir, inds_path=None, **kwargs):
     py_mod(
         name=name,
-        cls="yao.B.basic.M.Model",
+        cls="basic.M.Model",
         model_dir=model_dir,
         predict_config=predict_config,
         inds_path=inds_path,

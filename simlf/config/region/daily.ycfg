@@ -1,7 +1,5 @@
 require("config/prelude.ycfg")
 
-lib("lib/libyao.so")
-
 use_yaml("daily.yml", relative=True)
 
 

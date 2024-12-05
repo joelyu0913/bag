@@ -76,7 +76,7 @@ def run_worker_process(
                 if mod_name not in always_run_mods and env.rerun_manager.can_skip_run(
                     mod_name, mod_deps[mod_name]
                 ):
-                    logging.info(f"Skip module {mod_name}: already built")
+                    logging.debug(f"Skip module {mod_name}: already built")
                     return
 
             logging.debug(f"Running module {mod_name} on {worker_name}")

@@ -1,7 +1,6 @@
 aliases:
   dataroot: /export/data/dao_data/cn
-  model_dir: /export/data/dao_data/cn/derived/models
-  model_dir_local: /export/data/dao_data/cn/derived/models
+  model_dir: /export/data/billi/tmp/tmp_simlf/cache/cn/model
   zyyx_dir: /export/data/dao_data/cn/zyyx/zyyx.x
   zyyx_fdm_dir: /export/data/dao_data/cn/zyyx/zyyx.x
 

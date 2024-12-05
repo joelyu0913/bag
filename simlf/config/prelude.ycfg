@@ -38,7 +38,7 @@ def combo_mean(
     name: str,
     children: list[Union[str, Tuple[str, float]]],
     ops: str = "",
-    cls: str = "yao.B.basic.sup.SysComboMean",
+    cls: str = "basic.sup.SysComboMean",
     **kwargs,
 ) -> str:
     return py_combo(name=name, children=children, ops=ops, cls=cls, **kwargs)
@@ -48,7 +48,7 @@ def py_combo(
     name: str,
     children: list[Union[str, Tuple[str, float]]],
     ops: str = "scale",
-    cls: str = "yao.B.basic.sup.SysCombo",
+    cls: str = "basic.sup.SysCombo",
     deps: list[str] = [],
     **kwargs,
 ) -> str:
@@ -83,7 +83,7 @@ def py_ops(
 ):
     py_mod(
         name=name,
-        cls="yao.B.basic.sup.sys_ops.SysOps",
+        cls="basic.sup.sys_ops.SysOps",
         inputs=inputs,
         outputs=outputs,
         ops=ops,
@@ -120,7 +120,7 @@ def pnl_crypto(
         inputs.append(alpha)
     py_mod(
         name=f"pnl-{uuid.uuid4()}",
-        cls="yao.B.basic.sup.sup_pnl_crypto.SupPnlCrypto",
+        cls="basic.sup.sup_pnl_crypto.SupPnlCrypto",
         alphas=inputs,
         univ=univ,
         start_date=start_date,
@@ -145,7 +145,7 @@ def load_yaml(path):
 def py_link(name, src_cache, dst_cache, deps):
     py_mod(
         name=name,
-        cls="yao.B.basic.sup.sup_link.SupLink",
+        cls="basic.sup.sup_link.SupLink",
         src_cache=src_cache,
         dst_cache=dst_cache,
         deps=deps,

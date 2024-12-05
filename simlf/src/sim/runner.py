@@ -13,66 +13,6 @@ from data import Array, DateTimeIndex, UnivIndex
 
 IDLE_SLEEP_SECS = 0.002
 
-def create_env_old(config):
-    # check existing meta
-    meta = {}
-    meta["daily"] = config.get('daily', True)
-    max_univ_size = config['max_univ_size']
-    meta["max_univ_size"] = max_univ_size
-    meta["univ_start_datetime"] = config['univ_start_date'] if 'univ_start_date' in config else config['univ_start_datetime']
-    meta["univ_end_datetime"] = config['univ_end_date'] if 'univ_end_date' in config else config['univ_end_datetime']
-    meta["univ_indices"] = config.get('univ_indices', {})
-    meta["univ_indices_id_start"] = config['univ_indices_id_start']
-    meta["intraday_times"] = config.get('intraday_times', {})
-    meta["taq_times"] =  config['taq']['times']
-    meta["days_per_year"] = config['days_per_year']
-    meta["short_book_size"] = config['short_book_size']
-    meta["benchmark_index"] = config['benchmark_index']
-    dir_env = f"{config['sys_cache']}/env/"
-    os.makedirs(dir_env, exist_ok=True)
-    yaml.safe_dump(meta, open(f"{dir_env}/meta.yml", 'w'), sort_keys=False)
-    datetimes_ = DateTimeIndex.load(config['trade_dates'])
-    df = pd.read_csv(config['trade_dates'], header = None)
-    return 
-    df_date = df[(int(config['univ_start_date']) <= df[0]) & (df[0] <= int(config['univ_end_date']))]
-    path_trade_dates = f'{dir_env}/trade_dates'
-    df_date_prev = pd.read_csv(path_trade_dates, header=None) if os.path.exists(path_trade_dates) else []
-    df.to_csv(f'{dir_env}/trade_dates', header=False, index=False)
-    ##### start trasnlating
-    
-    
-#   LOG_INFO("user_mode: {}", user_mode());
-#   LOG_INFO("user_cache: {}", cache_dir_.user_dir());
-#   LOG_INFO("sys_cache: {}", cache_dir_.sys_dir());
-
-
-    new_start_dti = len(df_date_prev)
-    listing = Array.mmap(f"{dir_env}/listing", True, (len(df_date), max_univ_size), bool, False)
-
-    sec_master = config["sec_master"]
-    logging.info(f"Using sec_master {sec_master}")
-    df_sec = pd.read_csv(sec_master, sep='|')
-    last_univ_date = df_date[0].iloc[-1]
-    datetime_multiplier = 1 if meta['daily'] else 10000
-    for idx, line in df_sec.iterrows():
-        symbol = line['sid']
-        list_date = int(line['list'])
-        delist_date = 0
-
-        if str(line['delist']) != 'nan':
-            delist_date = int(line['delist'])
-
-        if str(line['list_entry']) != 'nan':
-            list_entry_date = int(line['list_entry'])
-            if list_entry > last_univ_date:
-                continue
-            if list_entry > list_date:
-                list_date = list_entry
-        if str(line['delist_entry']) != 'nan':
-            delist_entry_date = int(line['delist_entry'])
-            if delist_entry > delist_date:
-                delist_date = delist_entry
-
 def run_init(config):
     from sim.env_init import env_init
    

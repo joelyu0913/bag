@@ -1,4 +1,5 @@
 set -e
+source .env
 
 # build base data
 python src/cli/run.py --cfg config/region/daily.ycfg --cfg config/run/daily.sys.ycfg --cfg src/basic/cn_base/ff.ycfg  $*

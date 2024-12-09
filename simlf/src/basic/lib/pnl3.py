@@ -460,7 +460,8 @@ class Pnl3:
                 self.stats_fields = cn_stats_fields
                 self.default_info = {
                     "booksize": kwargs.get("booksize", 1e5),
-                    "fee_rate": kwargs.get("fee_rate", 6.5e-4),  # 'buy_fee':1e-4, 'sell_fee': 12e-4
+                    # "fee_rate": kwargs.get("fee_rate", 6.5e-4),  # 'buy_fee':1e-4, 'sell_fee': 12e-4
+                    "fee_rate": kwargs.get("fee_rate", {20010101: 0.00065, 20240101: 0.0004}),
                     "intervals_y": kwargs.get("intervals_y", 250),
                 }
             elif self.region == "crypto":
@@ -522,6 +523,8 @@ class Pnl3:
             field: self.default_info[field] for field in self.fields if field in self.default_info
         }
         info = {**info, **update_info}
+        if "fee_rate" in info and isinstance(info["fee_rate"], dict):
+                info["fee_rate"] = self.fee_config(info["fee_rate"], start_date, end_date)
 
         if sig.ndim == 3:
             cal_ts_info_3d(info, self.fields, start_di, end_di, sig.shape[1])
@@ -685,3 +688,20 @@ class Pnl3:
                     dates, dis = get_pre(input_dates, 10000)
 
             plt.xticks(dis, dates, rotation=30)
+
+    def fee_config(self, mp, start_date=-1, end_date=-1):
+        if start_date == -1:
+            start_di = 0
+        else:
+            start_di = self.sim.dates.lower_bound(start_date)
+        if end_date == -1:
+            end_di = self.sim.dates_size
+        else:
+            end_di = self.sim.dates.upper_bound(end_date)
+        ret_fees = np.zeros(end_di - start_di)
+        for date, val in mp.items():
+            di = self.sim.dates.lower_bound(date) - start_di
+            if di < 0:
+                di = 0
+            ret_fees[di:] = val
+        return ret_fees

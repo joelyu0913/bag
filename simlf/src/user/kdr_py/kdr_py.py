@@ -27,6 +27,7 @@ class KdrPy(Module):
         sim.start_di = max(self.start_di, lookback)
         sim.end_di = self.end_di
         du = (slice(sim.start_di, sim.end_di), slice(sim.univ_size))
+        univ_all = sim.load_mod('base/univ_all')
 
         if "output" in self.config:
             output = self.config["output"]
@@ -38,8 +39,10 @@ class KdrPy(Module):
 
         du_pre = (slice(sim.start_di - lookback, sim.end_di), slice(sim.univ_size))
         b_ret = sim.b_ret[du_pre]
-        ret_mean = ts_mean(b_ret.T, lookback).T
+        alpha[du_pre] = b_ret * 100000
+        alpha[~univ_all] = np.nan
+        # ret_mean = ts_mean(b_ret.T, lookback).T
 
-        alpha[du] = ret_mean[(slice(sim.end_di - sim.start_di), slice(sim.univ_size))]
-        alpha[du] = c_scale(c_demean(alpha[du]), 2e5)
+        # alpha[du] = ret_mean[(slice(sim.end_di - sim.start_di), slice(sim.univ_size))]
+        # alpha[du] = c_scale(c_demean(alpha[du]), 2e5)
 

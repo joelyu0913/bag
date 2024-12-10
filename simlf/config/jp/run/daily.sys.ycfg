@@ -1,0 +1,7 @@
+use_yaml("daily.yml", relative=True)
+
+opt(
+    live=False,
+    sys_cache="tmp/cache/cn_jp/sys",
+    use_rerun_manager=True,
+)

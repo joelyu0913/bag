@@ -82,6 +82,7 @@ class CnBaseStd(Module):
       univ_all[di] = listing[di]
 
       try:
+
         with gzip.open(raw_prc_path, 'rt') as f:
           header = f.readline().strip().split('|')
           header_mp = {header[i]: i for i in range(len(header))}
@@ -143,9 +144,9 @@ class CnBaseStd(Module):
                 logging.warn(f"{sid_name}, {st_pos}, {len(sid_name)}")
               st_arr[di, ii] = 1
             if 'halt' in line:
-              halt_arr[di, ii] = line.get("halt", 0) != 0
+              halt_arr[di, ii] = int(line.get("halt", 0)) != 0
             else:
-              halt_arr[di, ii] = 1 - line.get("active", 1)
+              halt_arr[di, ii] = 1 - int(line.get("active", 1))
             if halt_arr[di, ii]:
               univ_all[di, ii] = False
             limit_up_arr[di, ii] = line["up"] 

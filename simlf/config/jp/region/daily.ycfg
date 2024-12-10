@@ -1,0 +1,7 @@
+require("config/prelude.ycfg")
+
+use_yaml("daily.yml", relative=True)
+
+
+export("region", "cn")
+export("alpha_store_dir", "yao/A/_common/alpha_store")

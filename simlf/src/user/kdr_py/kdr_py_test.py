@@ -19,7 +19,7 @@ def c_scale(arr, sum_to=1):
     x = np.abs(arr).sum(axis = 1)
     return (arr.T / x).T * sum_to
 
-class KdrPy(Module):
+class KdrPyTest(Module):
     def run_impl(self):
         sim = Sim({"sys_cache": self.cache_dir.sys_dir, "user_cache": self.cache_dir.user_dir})
         sim.load_base(["ret"])
@@ -39,7 +39,10 @@ class KdrPy(Module):
 
         du_pre = (slice(sim.start_di - lookback, sim.end_di), slice(sim.univ_size))
         b_ret = sim.b_ret[du_pre]
-        ret_mean = ts_mean(b_ret.T, lookback).T
+        alpha[du_pre] = b_ret * 100000
+        if self.config.get('univ', False):
+            alpha[~univ_all] = np.nan
+        ret_mean = ts_mean(alpha[du_pre].T, lookback).T
 
         alpha[du] = ret_mean[(slice(sim.end_di - sim.start_di), slice(sim.univ_size))]
         alpha[du] = c_scale(c_demean(alpha[du]), 2e5)

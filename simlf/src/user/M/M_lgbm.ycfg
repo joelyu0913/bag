@@ -19,4 +19,4 @@ py_combo(
     ],
     "expdecay:0.3|neut:cty|scale",
 )
-pnl([('M_lgbm_pred/b_sig', 'univ:all|rank|neut|scale')])
+pnl([('M_lgbm_pred/b_sig', 'univ:csi1000|rank|neut|scale')])

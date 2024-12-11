@@ -56,6 +56,12 @@ class OperationManager:
                 sig_out[start_di:end_di] = c_scale(sig_out[start_di:end_di], scale_to)
             elif ops_ == 'neut':
                 sig_out[start_di:end_di] = c_demean(sig_out[start_di:end_di])
+            elif ops_ == 'univ':
+                univ_str = ops_info[1][0]
+                # b_univ = self.env.read_array(univ_str)
+                b_univ= self.env.read_data(Array, f'sup_univ/{univ_str}').data
+                sig_out[start_di:end_di][~b_univ[start_di:end_di]] = np.nan
+
             elif ops_ == 'ts_mean':
                 pass
                 # alpha[du] = ret_mean[(slice(sim.end_di - sim.start_di), slice(sim.univ_size))]

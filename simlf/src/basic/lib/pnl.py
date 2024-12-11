@@ -13,7 +13,7 @@ from tabulate import tabulate
 from data import Array
 from sim import DISPLAY_BOOK_SIZE, Env
 from cli.util import in_notebook
-# from B.basic.operation_manager import OperationManager
+from basic.operation_manager import OperationManager
 
 """
 pnl = PnlStats(["base", "hedge", "tcost", "ic", "ir"], {"buy_fee": 1e-4, "sell_fee": 11e-4})

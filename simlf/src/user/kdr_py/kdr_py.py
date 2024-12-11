@@ -7,17 +7,13 @@ import warnings
 warnings.filterwarnings("ignore")
 
 from sim import Module
-from basic.lib.pycommon.oper import ts_mean, c_demean
+from basic.lib.pycommon.oper import ts_mean, c_demean, c_scale
 from basic.lib.simm import Sim, apply_ops
 
 def rolling_sum(nums, window_size=5):
     # Use numpy's convolve to compute the rolling sum
     return np.convolve(nums, np.ones(window_size), 'fill')[:len(nums)]
 
-def c_scale(arr, sum_to=1):
-    arr[~np.isfinite(arr)] = 0
-    x = np.abs(arr).sum(axis = 1)
-    return (arr.T / x).T * sum_to
 
 class KdrPy(Module):
     def run_impl(self):

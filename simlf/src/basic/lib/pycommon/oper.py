@@ -669,3 +669,8 @@ def ts_ffillna(a, out):
             out[i] = 0.0
         else:
             out[i] = a[i]
+
+def c_scale(arr, sum_to=1):
+    arr[~np.isfinite(arr)] = 0
+    x = np.abs(arr).sum(axis = 1)
+    return (arr.T / x).T * sum_to

@@ -1,0 +1,10 @@
+Discuss:
+Next week meeting
+
+report:
+1 - Script to observe job
+2 - transform code (80%)
+3 - write manual
+
+
+Copy everything into the code

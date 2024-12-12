@@ -1,0 +1,31 @@
+import yaml
+
+predict_config = resolve_relative_path("predict.yml")
+
+
+def model(name, model_dir, inds_path=None, **kwargs):
+    py_mod(
+        name=name,
+        cls="basic.M.Model",
+        model_dir=model_dir,
+        predict_config=predict_config,
+        inds_path=inds_path,
+        grf=False,
+        **kwargs,
+    )
+
+
+def model_grf(name, model_dir, inds_path=None, **kwargs):
+    py_mod(
+        name=name,
+        cls="basic.M.Model",
+        model_dir=model_dir,
+        predict_config=predict_config,
+        inds_path=inds_path,
+        grf=True,
+        **kwargs,
+    )
+
+
+export("model", model)
+export("model_grf", model_grf)

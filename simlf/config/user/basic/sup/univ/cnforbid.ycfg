@@ -1,0 +1,17 @@
+# cpp_mod(
+#     name="sup_univ_cnforbid0",
+#     cls="SupUnivPick",
+#     par_univ="sup_univ/cnforbid0",
+#     sids=["689009.SH", "002812.SZ"],
+#     dates=[20160101, 20221124],
+#     stages=["prepare"],
+# )
+
+# py_mod(
+#     name="sup_univ_cn_BJ",
+#     cls="yao.B.data.sup_univ.cn_exch.SupUnivCnExch",
+#     output="sup_univ/cn_BJ",
+#     exch=["BJ"],
+# )
+
+py_mod(name="sup_univ_st", cls="basic.sup.univ.sup_univ_st.SupUnivSt", output="sup_univ/st", st_path="base/st")

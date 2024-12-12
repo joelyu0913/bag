@@ -1,0 +1,28 @@
+data:
+  # target: grf_coint_y_ret/y_ret_1__csi500_addlimit
+  target: ext/fret_pr_raw_1__csi500_addlimit
+  target_len: 1
+  features: []
+  min_valid_ratio: 0.8
+  roll_years:
+    train: 4
+    valid: 0
+    pred: 1
+
+preprocess:
+  features:
+    - type: CsStdScaler
+      center: false
+
+model:
+  type: prophet.ml.LGBM
+  learning_rate: 0.2
+  boosting_type: "gbdt"
+  objective: "regression"
+  metric: "mse"
+  sub_feature: 0.5
+  num_leaves: 220
+  min_data: 5000
+  max_depth: 11
+  lambda_l1: 0.1
+  lambda_l2: 0.2

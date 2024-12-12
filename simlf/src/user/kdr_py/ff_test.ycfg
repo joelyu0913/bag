@@ -1,0 +1,21 @@
+py_mod(
+    name="kdr_py_test_1_true",
+    cls="user.kdr_py.kdr_py_test.KdrPyTest",
+    lookback = 1,
+    output="test/kdr_py_test_1_true",
+    univ=True
+)
+
+py_mod(
+    name="kdr_py_test_1_false",
+    cls="user.kdr_py.kdr_py_test.KdrPyTest",
+    lookback = 1,
+    output="test/kdr_py_test_1_false",
+    univ=False
+)
+
+pnl(
+    ["test/kdr_py_test_1_true",
+    "test/kdr_py_test_1_false",
+    ],
+)

@@ -1,0 +1,81 @@
+aliases:
+  dataroot: /export/data/dao_data/cn
+  model_dir: /export/data/billi/tmp/tmp_simlf/cache/cn/model
+  zyyx_dir: /export/data/dao_data/cn/zyyx/zyyx.x
+  zyyx_fdm_dir: /export/data/dao_data/cn/zyyx/zyyx.x
+
+dataroot: $dataroot
+trade_dates: $dataroot/env/trade_dates
+sec_master: $dataroot/env/sec_master/sec_master
+raw_prc_file: $dataroot/prod/basedata/stock/%Y/%m/%Y%m%d.gz
+index_file: $dataroot/prod/basedata/index/%Y/%m/%Y%m%d.gz
+cut_mode: cut
+cut_time: "1445"
+trade_book_size: 1e7
+
+env: CnEnv
+benchmark_index: 000905.SH
+days_per_year: 250
+short_book_size: False
+
+univ_indices: 
+  - "000905.SH"
+  - "000300.SH"
+  - "000016.SH"
+  - "000842.SH"
+  - "000852.SH"
+  - "932000.SH"
+
+taq:
+  module: sup_taq
+  times:
+    - "0930"
+    - "0935"
+    - "0940"
+    - "0945"
+    - "0950"
+    - "0955"
+    - "1000"
+    - "1005"
+    - "1010"
+    - "1015"
+    - "1020"
+    - "1025"
+    - "1030"
+    - "1035"
+    - "1040"
+    - "1045"
+    - "1050"
+    - "1055"
+    - "1100"
+    - "1105"
+    - "1110"
+    - "1115"
+    - "1120"
+    - "1125"
+    - "1130"
+    - "1300"
+    - "1305"
+    - "1310"
+    - "1315"
+    - "1320"
+    - "1325"
+    - "1330"
+    - "1335"
+    - "1340"
+    - "1345"
+    - "1350"
+    - "1355"
+    - "1400"
+    - "1405"
+    - "1410"
+    - "1415"
+    - "1420"
+    - "1425"
+    - "1430"
+    - "1435"
+    - "1440"
+    - "1445"
+    - "1450"
+    - "1455"
+    - "1500"

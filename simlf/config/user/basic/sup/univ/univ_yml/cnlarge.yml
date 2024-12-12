@@ -1,0 +1,9 @@
+par_univ_size: 6000
+par_univ_vol_window: 60
+par_univ_lookback: 10
+par_univ_sticky_days: 10
+par_univ_pass_rate: 100
+par_univ_min_dvol: 1e8
+par_univ_min_cap: 1e5
+par_univ_max_prc: 15000
+par_univ_min_prc: 3

@@ -1,0 +1,7 @@
+py_mod(
+    name="sup_univ_cnall",
+    cls="basic.sup.univ.sup_univ_clone.SupUnivClone",
+    stages=["prepare"],
+    par_from="base/univ_all",
+    par_to="sup_univ/cnall",
+)

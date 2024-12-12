@@ -1,0 +1,202 @@
+import uuid
+from typing import Any, Tuple, Union
+
+alpha_store_dir = "yao/A/_common/alpha_store"
+
+
+def add_default_signal(mod: str) -> str:
+    if "/" in mod:
+        return mod
+    return mod + "/b_sig_op"
+
+
+def _mod(
+    name: str, lang: str, ops: str = None, deps: list[str] = [], par_ops: str = None, **kwargs
+) -> str:
+    if par_ops is not None:
+        raise RuntimeError("par_ops is deprecated, use ops instead")
+    if ops is not None:
+        # HACK: limit uses i_close
+        if "limit" in ops and "ibase" not in deps:
+            deps = deps + ["ibase"]
+        kwargs["ops"] = ops
+    mod(name=name, deps=list(set(deps)), lang=lang, **kwargs)
+    return name
+
+def py_mod(**kwargs) -> str:
+    return _mod(lang="py", **kwargs)
+
+
+def combo(
+    *args,
+    **kwargs,
+) -> str:
+    return py_combo(*args, **kwargs)
+
+
+def combo_mean(
+    name: str,
+    children: list[Union[str, Tuple[str, float]]],
+    ops: str = "",
+    cls: str = "basic.sup.SysComboMean",
+    **kwargs,
+) -> str:
+    return py_combo(name=name, children=children, ops=ops, cls=cls, **kwargs)
+
+
+def py_combo(
+    name: str,
+    children: list[Union[str, Tuple[str, float]]],
+    ops: str = "scale",
+    cls: str = "basic.sup.SysCombo",
+    deps: list[str] = [],
+    **kwargs,
+) -> str:
+    inputs = []
+    input_deps = []
+    implicit_deps = []
+    for child in children:
+        if isinstance(child, str):
+            signal = child
+            weight = 1
+        else:
+            signal, weight = child
+        signal = add_default_signal(signal)
+        inputs.append({"signal": signal, "weight": weight})
+        mod_name = signal.split("/", 1)[0]
+        if signal.endswith("/b_sig_op") or signal.endswith("/b_sig"):
+            implicit_deps.append(mod_name)
+        else:
+            input_deps.append(mod_name)
+    if not deps:
+        deps = input_deps
+    py_mod(name=name, cls=cls, ops=ops, deps=deps + implicit_deps, signals=inputs, **kwargs)
+    return name
+
+
+def py_ops(
+    name: str,
+    inputs: list[str],
+    outputs: list[str] = [],
+    ops: str = "",
+    deps: list[str] = [],
+):
+    py_mod(
+        name=name,
+        cls="basic.sup.sys_ops.SysOps",
+        inputs=inputs,
+        outputs=outputs,
+        ops=ops,
+        deps=deps,
+    )
+
+
+def pnl(alphas: list[Union[str, Tuple[str, str]]], **kwargs) -> None:
+    inputs = []
+    for a in alphas:
+        if isinstance(a, str):
+            alpha = {"alpha": add_default_signal(a)}
+        else:
+            alpha = {"alpha": add_default_signal(a[0]), "ops": a[1]}
+        inputs.append(alpha)
+    py_mod(
+        name=f"pnl-{uuid.uuid4()}",
+        cls="basic.sup.sup_pnl.SupPnl",
+        alphas=inputs,
+        post=True,
+        **kwargs,
+    )
+
+
+def pnl_crypto(
+    alphas: list[Union[str, Tuple[str, str]]], univ: str, start_date: int, **kwargs
+) -> None:
+    inputs = []
+    for a in alphas:
+        if isinstance(a, str):
+            alpha = {"alpha": add_default_signal(a)}
+        else:
+            alpha = {"alpha": add_default_signal(a[0]), "ops": a[1]}
+        inputs.append(alpha)
+    py_mod(
+        name=f"pnl-{uuid.uuid4()}",
+        cls="basic.sup.sup_pnl_crypto.SupPnlCrypto",
+        alphas=inputs,
+        univ=univ,
+        start_date=start_date,
+        post=True,
+        **kwargs,
+    )
+
+
+
+def dummy(name: str, **kwargs) -> str:
+    py_mod(name=name, cls="yang.sim.Module", **kwargs)
+    return name
+
+
+import yaml
+
+
+def load_yaml(path):
+    return yaml.safe_load(open(path))
+
+
+def py_link(name, src_cache, dst_cache, deps):
+    py_mod(
+        name=name,
+        cls="basic.sup.sup_link.SupLink",
+        src_cache=src_cache,
+        dst_cache=dst_cache,
+        deps=deps,
+    )
+
+
+def py_fi(fi_path):
+    use(f"{alpha_store_dir}/create_raw/_all.ycfg", local_globals=globals())
+
+    FI_inds = load_yaml(fi_path)
+    mods = []
+    outputs = []
+
+    for FI in FI_inds:
+        mods.append(
+            py_combo(
+                FI["fi"].replace("/", "_"),
+                [FI["ind"]],
+                FI["ops"],
+                output=FI["fi"],
+                deps=[PV_mods],
+            )
+        )
+        outputs.append(FI["fi"])
+    return mods, outputs
+
+
+export("py_mod", py_mod)
+export("combo", combo)
+export("combo_mean", combo_mean)
+export("py_combo", py_combo)
+export("py_ops", py_ops)
+export("pnl", pnl)
+export("pnl_crypto", pnl_crypto)
+export("dummy", dummy)
+export("load_yaml", load_yaml)
+export("py_link", py_link)
+export("py_fi", py_fi)
+
+def pf_alloc(name, pfs, output, **kwargs):
+    ll = []
+    total_wt = 0.0
+    for pf in pfs:
+        if isinstance(pf, str):
+            ll.append([pf, 1.0])
+            total_wt += 1.0
+        else:
+            ll.append([pf[0], pf[1]])
+            total_wt += pf[1]
+    new_ll = [[pr[0], pr[1] / total_wt] for pr in ll]
+    py_combo(name, new_ll, ops="", output=output, **kwargs)
+
+
+export("pf_alloc", pf_alloc)

@@ -1,0 +1,16 @@
+#include "yang/math/eigen.h"
+#include "yang/math/mat_ops.h"
+#include "yang/sim/operation.h"
+
+namespace {
+
+struct OpNeg : yang::Operation {
+  void Apply(MatView<float> sig, const yang::Env &env, int start_di, int end_di) final {
+    auto mat = mat_to_eigen(sig).block(start_di, 0, end_di - start_di, env.univ_size());
+    mat = -mat;
+  }
+};
+
+REGISTER_OPERATION("neg", OpNeg);
+
+}  // namespace

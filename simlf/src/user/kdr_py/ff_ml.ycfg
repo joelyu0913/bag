@@ -1,0 +1,13 @@
+kdr_py_ml = []
+
+for i in range(200):
+	name = f"kdr_py_ml_{i}"
+	py_mod(
+	    name=name,
+	    cls="user.kdr_py.kdr_py.KdrPy",
+	    lookback = i,
+	    output=f"ml/kdr_py_{i}",
+	)
+	kdr_py_ml.append(name)
+
+export("mods_kdr_py_ml", kdr_py_ml)

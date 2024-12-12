@@ -1,0 +1,8 @@
+cpp_mod(
+    name="sup_univ_cnlarge",
+    cls="SupUnivCn",
+    stages=["prepare"],
+    par_univ="sup_univ/cnlarge",
+    yaml_cfg="univ_yml/cnlarge.yml",
+    yaml_relative=True,
+)

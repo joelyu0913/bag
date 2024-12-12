@@ -1,0 +1,35 @@
+data:
+  target: ext/fret_index_0_1_1_10
+  target_len: 1
+  features: []
+  min_valid_ratio: 0.7
+  roll_years:
+    train: 1.5
+    valid: 0
+    pred: 0.1
+  train_from_start: false
+  sample_weight_func: yao.M.sample_weight.shock_weight3
+
+preprocess:
+  lookback: 30
+  axis: [stock, time, value]
+  features:
+    - type: CsStdScaler
+      axis: stock
+      center: false
+    - type: FFillSmoother
+      axis: time
+      horizon: 30
+    - type: FillNA
+      fill_value: 0
+
+model:
+  type: prophet.ml.LGBM
+  learning_rate: 0.2
+  boosting_type: "gbdt"
+  objective: "regression"
+  metric: "mse"
+  sub_feature: 0.5
+  num_leaves: 50
+  min_data: 50
+  max_depth: 8

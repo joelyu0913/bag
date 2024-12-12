@@ -1,0 +1,36 @@
+data:
+  target: ext/fret_raw_1
+  target_len: 1
+  features: []
+  min_valid_ratio: 0.7
+  roll_years:
+    train: 4
+    valid: 0
+    pred: 1
+
+preprocess:
+  lookback: 30
+  axis: [stock, time, value]
+  features:
+    - type: CsStdScaler
+      axis: stock
+      center: false
+    - type: FFillSmoother
+      axis: time
+      horizon: 30
+    - type: FillNA
+      fill_value: 0
+
+model:
+  type: prophet.ml.LGBM
+  learning_rate: 0.2
+  boosting_type: "gbdt"
+  objective: "regression"
+  metric: "mse"
+  sub_feature: 0.5
+  num_leaves: 220
+  min_data: 5000
+  max_depth: 11
+  lambda_l1: 0.1
+  lambda_l2: 0.2
+  num_threads: 6

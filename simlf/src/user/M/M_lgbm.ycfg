@@ -1,0 +1,22 @@
+require("ycfg/model.ycfg", relative=True)
+require("src/user/kdr_py/ff_ml.ycfg")
+
+ops_ = "neut:cty|scale"
+
+for i in range(1):
+    model(
+        name=f"M_lgbm_{i}_pred",
+        model_dir=f"$model_dir/lgbm/grp_lgbm_kdr/{i}",
+        inds_path="src/user/kdr_py/inds_200.yml",
+        # ops=ops_,
+        deps=mods_kdr_py_ml,
+    )
+
+py_combo(
+    "M_lgbm_pred",
+    [
+        *[f"M_lgbm_{i}_pred/b_sig" for i in range(1)],
+    ],
+    "expdecay:0.3|neut:cty|scale",
+)
+pnl([('M_lgbm_pred/b_sig', 'univ:csi1000|rank|neut|scale')])

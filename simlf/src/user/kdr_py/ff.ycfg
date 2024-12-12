@@ -1,0 +1,17 @@
+py_mod(
+    name="kdr_py_1",
+    cls="user.kdr_py.kdr_py.KdrPy",
+    lookback = 1,
+    output="test/kdr_py_1",
+)
+py_mod(
+    name="kdr_py_5",
+    cls="user.kdr_py.kdr_py.KdrPy",
+    lookback = 5,
+    output="test/kdr_py_5",
+)
+pnl(
+    ["test/kdr_py_1",
+    "test/kdr_py_5"
+    ],
+)

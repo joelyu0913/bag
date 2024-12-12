@@ -1,0 +1,20 @@
+require("cnforbid.ycfg", relative=True)
+# no st allowed
+py_mod(
+    name="sup_univ_cninfo",
+    cls="basic.sup.univ.sup_univ_cn.SupUnivCn",
+    stages=["prepare"],
+    par_univ="sup_univ/cninfo",
+    yaml_cfg="univ_yml/cninfo.yml",
+    yaml_relative=True,
+)
+
+py_mod(
+    name="sup_univ_cninfo1",
+    cls="basic.sup.univ.sup_univ_merge.SupUnivMerge",
+    stages=["prepare"],
+    par_univ="sup_univ/cninfo1",
+    par_include=["sup_univ/cninfo"],
+    par_exclude=["sup_univ/st"],
+    deps=["sup_univ_cninfo", "sup_univ_st"],
+)

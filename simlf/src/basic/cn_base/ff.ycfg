@@ -1,0 +1,4 @@
+py_mod(
+    name="cn_base_std",
+    cls="basic.cn_base.cn_base_std_vFast.CnBaseStd",
+)

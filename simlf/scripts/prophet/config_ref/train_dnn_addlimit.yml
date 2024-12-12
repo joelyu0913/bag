@@ -1,0 +1,72 @@
+data:
+  target_len: 1
+  target: ext/fret_index_0_1_1_10
+  features: []
+  min_valid_ratio: 0.7
+  roll_years:
+    train: 4
+    valid: 1.5
+    pred: 1
+    train_from_start: true
+
+preprocess:
+  lookback: 30
+  axis: [stock, time, value]
+  features:
+    - type: CsStdScaler
+      axis: stock
+      center: false
+    - type: FFillSmoother
+      axis: time
+      horizon: 30
+    - type: FillNA
+      fill_value: 0
+
+model:
+  type: prophet.nn.LSTM
+  seq_len: 1
+  layers:
+    - type: Linear
+      out_features: 32
+    - type: LayerNorm
+      axis: [-2, -1]
+    - type: Tanh
+    - type: Linear
+      out_features: 16
+    - type: LayerNorm
+      axis: [-2, -1]
+    - type: Tanh
+    - type: Dropout
+      p: 0.3
+    - type: Linear
+      out_features: 8
+    - type: LayerNorm
+      axis: [-2, -1]
+    - type: Tanh
+    - type: Dropout
+      p: 0.3
+    - type: Linear
+      out_features: 1
+      bias: false
+
+train:
+  gpus: [0]
+  use_gpu: True
+  num_threads: 1
+  optimizer:
+    type: Adam
+    lr: 3.0e-4
+  lr_scheduler:
+    type: OneCycleLR
+    max_lr: 4.0e-3
+  loss:
+    type: MSELoss
+  metrics: [IC]
+  early_stopping:
+    metric: IC
+    mode: max
+    patience: 10
+  epochs: 50
+  clip_norm: 1.0
+  batch_size: 512
+  data_workers: 4

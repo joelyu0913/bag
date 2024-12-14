@@ -100,8 +100,9 @@ def env_init(config):
     df_sec = pd.read_csv(sec_master, sep="|", dtype=str)
     last_univ_date = datetimes_.items[-1]
     datetime_multiplier = 1 if daily_ else 10000
+    sid_field = config.get('sid_field', 'sid')
     for idx, line in df_sec.iterrows():
-        symbol = line["sid"]
+        symbol = line[sid_field]
         list_date = int(line["list"])
         delist_date = 99999999
 

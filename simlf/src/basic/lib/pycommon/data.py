@@ -8,6 +8,14 @@ from collections.abc import Iterable
 import numpy as np
 import pandas as pd
 
+def read_header(f, sep ='|'):
+    header = f.readline().strip().split(sep)
+    return {header[i]: i for i in range(len(header))}
+
+
+def read_line(raw_line, header_mp, sep='|'):
+    line_ = raw_line.strip().split(sep)
+    return {x: line_[i] for x, i in header_mp.items()}
 
 class EnvData:
     def __init__(self, env_dir, start_date, end_date):

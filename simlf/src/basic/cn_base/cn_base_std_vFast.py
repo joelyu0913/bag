@@ -8,6 +8,8 @@ import gzip
 
 from data import Array, Index
 from sim import Module
+from basic.lib.pycommon.data import read_header, read_line
+
 class CnBaseStd(Module):
   '''
   0 | SSE 主板    | SSE Main
@@ -84,14 +86,16 @@ class CnBaseStd(Module):
       try:
 
         with gzip.open(raw_prc_path, 'rt') as f:
-          header = f.readline().strip().split('|')
-          header_mp = {header[i]: i for i in range(len(header))}
+          # header = f.readline().strip().split('|')
+          # header_mp = {header[i]: i for i in range(len(header))}
+          header_mp = read_header(f)
           float_fields = ["open", "close", "high", "low", "vol", "dvol", "sho", "flo", "pclose", "adj", 'up', 'down']
           str_fields = ["sid", "name", "sector", "ind", "subind", "exch", 'st', 'halt']
 
           for raw_line in f:
-            line_ = raw_line.strip().split('|')
-            line = {x: line_[i] for x, i in header_mp.items()}
+            # line_ = raw_line.strip().split('|')
+            # line = {x: line_[i] for x, i in header_mp.items()}
+            line = read_line(raw_line, header_mp)
             for k in float_fields:
               if line[k] == "":
                 line[k] = np.nan

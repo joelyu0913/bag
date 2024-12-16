@@ -75,7 +75,7 @@ class CnBaseStd(Module):
       updated_stock = 0
       updated_idx = 0
 
-      with gzip.open(raw_prc_path, 'rt') as f:
+      with gzip.open(path, 'rt') as f:
         header_mp = read_header(f)
         # str_fields = ["sid", "name", "sector", "ind", "subind", "exch", 'st', 'halt']
 
@@ -149,7 +149,7 @@ class CnBaseStd(Module):
 
     def write_index_cache(path): 
       updated_idx = 0
-      with gzip.open(index_path, 'rt') as f:
+      with gzip.open(path, 'rt') as f:
         header_mp = read_header(f)
 
         for raw_line in f:
@@ -206,6 +206,7 @@ class CnBaseStd(Module):
       except Exception as e:
         logging.fatal(f"Failed to load {index_path}: {e}")
       logging.info(f"[{self.name}] [{date}] Loaded {updated_stock} stocks, {updated_idx} indices")
+
     sector_idx.save()
     industry_idx.save()
     subindustry_idx.save()

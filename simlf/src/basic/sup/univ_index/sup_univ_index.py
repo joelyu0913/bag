@@ -7,6 +7,7 @@ import pandas as pd
 
 from sim import Module
 from basic.lib.simm import Sim
+from basic.lib.pycommon.data import read_header, read_line
 
 
 def write_member(sim, gz_univ, gz_member, date, di, path_fmt, file_type):
@@ -18,15 +19,18 @@ def write_member(sim, gz_univ, gz_member, date, di, path_fmt, file_type):
         gz_member[di, :] = np.nan
         sum_wt = 0.0
         if file_type == "csv":
-            df = pd.read_csv(file_path)
-            for row in df.iterrows():
-                row = row[1]
-                sid = row["code"]
-                wt = row["weight"]
-                ii = sim.univ.find(sid)
-                gz_univ[di, ii] = True
-                gz_member[di, ii] = wt
-                sum_wt += wt
+            with open(file_path, 'rt') as f:
+                header_mp = read_header(f, sep=',')
+
+                for ln in f:
+                    row = read_line(ln, header_mp, sep=',', float_fields = ['weight'])
+                    sid = row["code"]
+                    wt = row["weight"]
+                    ii = sim.univ.find(sid)
+                    gz_univ[di, ii] = True
+                    gz_member[di, ii] = wt
+                    sum_wt += wt
+
         elif file_type == "feather":
             df = pd.read_feather(file_path)
             for row in df.iterrows():

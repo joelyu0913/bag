@@ -87,16 +87,10 @@ class CnBaseStd(Module):
 
         with gzip.open(raw_prc_path, 'rt') as f:
           header_mp = read_header(f)
-          float_fields = ["open", "close", "high", "low", "vol", "dvol", "sho", "flo", "pclose", "adj", 'up', 'down']
-          str_fields = ["sid", "name", "sector", "ind", "subind", "exch", 'st', 'halt']
+          # str_fields = ["sid", "name", "sector", "ind", "subind", "exch", 'st', 'halt']
 
           for raw_line in f:
-            line = read_line(raw_line, header_mp)
-            for k in float_fields:
-              if line[k] == "":
-                line[k] = np.nan
-              else:
-                line[k] = float(line[k])
+            line = read_line(raw_line, header_mp, float_fields = ["open", "close", "high", "low", "vol", "dvol", "sho", "flo", "pclose", "adj", 'up', 'down'])
 
             sid = line["sid"]
             if len(sid) != 9:
@@ -166,34 +160,39 @@ class CnBaseStd(Module):
         logging.error(f"Failed to load {raw_prc_path}: {e}")
 
       try:
-        df = pd.read_csv(index_path, sep='|')
-        for _, line in df.iterrows():
-          iid = line["sid"]
-          if len(iid) != 9:
-            logging.fatal(f"sid {iid} error")
-          ii = env.univ.find(iid)
-          if ii < 0:
-            continue
-          open_arr[di, ii] = line["open"]
-          close_arr[di, ii] = line["close"]
-          high_arr[di, ii] = line["high"]
-          low_arr[di, ii] = line["low"]
-          vol_arr[di, ii] = line["vol"]
-          dvol_arr[di, ii] = line["dvol"]
-          vwap_arr[di, ii] = 0 if vol_arr[di, ii] == 0 else dvol_arr[di, ii] / vol_arr[di, ii]
+        with gzip.open(index_path, 'rt') as f:
+          header_mp = read_header(f)
 
-          cumadj_arr[di, ii] = 1
-          adj_arr[di, ii] = 1
-          univ_all[di, ii] = True
+          for raw_line in f:
+            line = read_line(raw_line, header_mp, float_fields = ["open", "close", "high", "low", "vol", "dvol"])
 
-          limit_up_arr[di, ii] = 99999999
-          limit_down_arr[di, ii] = 0
+            iid = line["sid"]
+            if len(iid) != 9:
+              logging.fatal(f"sid {iid} error")
+            ii = env.univ.find(iid)
+            if ii < 0:
+              continue
+            open_arr[di, ii] = line["open"]
+            close_arr[di, ii] = line["close"]
+            high_arr[di, ii] = line["high"]
+            low_arr[di, ii] = line["low"]
+            vol_arr[di, ii] = line["vol"]
+            dvol_arr[di, ii] = line["dvol"]
+            vwap_arr[di, ii] = 0 if vol_arr[di, ii] == 0 else dvol_arr[di, ii] / vol_arr[di, ii]
 
-          if indices.get(iid):
-            updated_idx += 1
+            cumadj_arr[di, ii] = 1
+            adj_arr[di, ii] = 1
+            univ_all[di, ii] = True
+
+            limit_up_arr[di, ii] = 99999999
+            limit_down_arr[di, ii] = 0
+
+            if indices.get(iid):
+              updated_idx += 1
       except Exception as e:
         logging.fatal(f"Failed to load {index_path}: {e}")
       logging.info(f"[{self.name}] [{date}] Loaded {updated_stock} stocks, {updated_idx} indices")
+
     sector_idx.save()
     industry_idx.save()
     subindustry_idx.save()

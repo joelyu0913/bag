@@ -13,9 +13,15 @@ def read_header(f, sep ='|'):
     return {header[i]: i for i in range(len(header))}
 
 
-def read_line(raw_line, header_mp, sep='|'):
+def read_line(raw_line, header_mp, sep='|', float_fields=[]):
     line_ = raw_line.strip().split(sep)
-    return {x: line_[i] for x, i in header_mp.items()}
+    line =  {x: line_[i] for x, i in header_mp.items()}
+    for k in float_fields:
+        if line[k] == "":
+            line[k] = np.nan
+        else:
+            line[k] = float(line[k])
+    return line
 
 class EnvData:
     def __init__(self, env_dir, start_date, end_date):

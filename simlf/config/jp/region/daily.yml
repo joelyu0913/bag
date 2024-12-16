@@ -6,7 +6,7 @@ aliases:
 
 dataroot: $dataroot
 trade_dates: $dataroot/env/trade_dates
-sec_master: config/jp/sec/sec_master.out
+sec_master: config/jp/sec/sec_master.out2
 raw_prc_file: $dataroot/prod/basedata/stock/%Y/%m/%Y%m%d.gz
 index_file: $dataroot/prod/basedata/index/%Y/%m/%Y%m%d.gz
 cut_mode: cut

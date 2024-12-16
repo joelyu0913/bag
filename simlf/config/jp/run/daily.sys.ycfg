@@ -2,6 +2,6 @@ use_yaml("daily.yml", relative=True)
 
 opt(
     live=False,
-    sys_cache="tmp/cache/cn_jp/sys",
+    sys_cache="tmp/cache/cn_jp2/sys",
     use_rerun_manager=True,
 )

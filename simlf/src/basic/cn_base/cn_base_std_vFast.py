@@ -86,15 +86,11 @@ class CnBaseStd(Module):
       try:
 
         with gzip.open(raw_prc_path, 'rt') as f:
-          # header = f.readline().strip().split('|')
-          # header_mp = {header[i]: i for i in range(len(header))}
           header_mp = read_header(f)
           float_fields = ["open", "close", "high", "low", "vol", "dvol", "sho", "flo", "pclose", "adj", 'up', 'down']
           str_fields = ["sid", "name", "sector", "ind", "subind", "exch", 'st', 'halt']
 
           for raw_line in f:
-            # line_ = raw_line.strip().split('|')
-            # line = {x: line_[i] for x, i in header_mp.items()}
             line = read_line(raw_line, header_mp)
             for k in float_fields:
               if line[k] == "":
@@ -108,7 +104,7 @@ class CnBaseStd(Module):
             
             ii = env.univ.find(sid)
 
-            if ii < 0:
+            if ii < 0 or sid.split('.')[1] not in ['SH', 'SZ']:
               continue
             open_arr[di, ii] = line["open"]
             close_arr[di, ii] = line["close"]

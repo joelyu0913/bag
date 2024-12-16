@@ -70,6 +70,117 @@ class CnBaseStd(Module):
 
     raw_prc_file = env.config["raw_prc_file"]
     index_file = env.config["index_file"]
+
+    def write_stock_cache(path):
+      updated_stock = 0
+      updated_idx = 0
+
+      with gzip.open(raw_prc_path, 'rt') as f:
+        header_mp = read_header(f)
+        # str_fields = ["sid", "name", "sector", "ind", "subind", "exch", 'st', 'halt']
+
+        for raw_line in f:
+          line = read_line(raw_line, header_mp, float_fields = ["open", "close", "high", "low", "vol", "dvol", "sho", "flo", "pclose", "adj", 'up', 'down'])
+
+          sid = line["sid"]
+          if len(sid) != 9:
+            logging.fatal(f"sid {sid} error")
+          
+          ii = env.univ.find(sid)
+
+          if ii < 0 or sid.split('.')[1] not in ['SH', 'SZ']:
+            continue
+          open_arr[di, ii] = line["open"]
+          close_arr[di, ii] = line["close"]
+          high_arr[di, ii] = line["high"]
+          low_arr[di, ii] = line["low"]
+          vol_arr[di, ii] = line["vol"]
+          dvol_arr[di, ii] = line["dvol"]
+          vwap_arr[di, ii] = 0 if vol_arr[di, ii] == 0 else dvol_arr[di, ii] / vol_arr[di, ii]
+
+          sector = line["sector"]
+          industry = line["ind"]
+          subindustry = line["subind"]
+
+          cty_arr[di, ii] = 1
+          sector_arr[di, ii] = sector_idx.insert(sector)
+          industry_arr[di, ii] = industry_idx.insert(industry)
+          subindustry_arr[di, ii] = subindustry_idx.insert(subindustry)
+
+          sharesout_arr[di, ii] = line["sho"]
+          sharesfloat_arr[di, ii] = line["flo"]
+          cap_arr[di, ii] = sharesout_arr[di, ii] * line["pclose"]
+
+          adj_arr[di, ii] = line["adj"] if np.isfinite(line["adj"]) else 1.0
+          if di > 0:
+            if "pclose" in line:
+              adj_ = close_arr[di - 1, ii] / line["pclose"]
+              if np.abs(adj_arr[di, ii] - adj_) > 1e-5:
+                logging.error(f"Invalid adj: {di} - {env.dates[di]}, {ii} - {env.univ[ii]}, {adj_arr[di, ii]}, {adj_}")
+            else:
+              pass
+          sid_name = line["name"]
+          st_pos = sid_name.find("ST")
+          if st_pos == -1:
+            st_arr[di, ii] = 0
+          else:
+            if st_pos > 2:
+              logging.warn(f"{sid_name}, {st_pos}, {len(sid_name)}")
+            st_arr[di, ii] = 1
+          if 'halt' in line:
+            halt_arr[di, ii] = int(line.get("halt", 0)) != 0
+          else:
+            halt_arr[di, ii] = 1 - int(line.get("active", 1))
+          if halt_arr[di, ii]:
+            univ_all[di, ii] = False
+          limit_up_arr[di, ii] = line["up"] 
+          limit_down_arr[di, ii] = line["down"]
+          exch = line["exch"]
+          if exch in exchanges:
+            exch_arr[di, ii] = exchanges[exch]
+          else:
+            logging.warn(f"Unknown exchange: {exch}")
+          
+          if indices.get(sid):
+            updated_idx += 1
+          else:
+            updated_stock += 1
+        return updated_stock, updated_idx
+
+    def write_index_cache(path): 
+      updated_idx = 0
+      with gzip.open(index_path, 'rt') as f:
+        header_mp = read_header(f)
+
+        for raw_line in f:
+          line = read_line(raw_line, header_mp, float_fields = ["open", "close", "high", "low", "vol", "dvol"])
+
+          iid = line["sid"]
+          if len(iid) != 9:
+            logging.fatal(f"sid {iid} error")
+          ii = env.univ.find(iid)
+          if ii < 0:
+            continue
+          open_arr[di, ii] = line["open"]
+          close_arr[di, ii] = line["close"]
+          high_arr[di, ii] = line["high"]
+          low_arr[di, ii] = line["low"]
+          vol_arr[di, ii] = line["vol"]
+          dvol_arr[di, ii] = line["dvol"]
+          vwap_arr[di, ii] = 0 if vol_arr[di, ii] == 0 else dvol_arr[di, ii] / vol_arr[di, ii]
+
+          cumadj_arr[di, ii] = 1
+          adj_arr[di, ii] = 1
+          univ_all[di, ii] = True
+
+          limit_up_arr[di, ii] = 99999999
+          limit_down_arr[di, ii] = 0
+
+          if indices.get(iid):
+            updated_idx += 1
+        return updated_idx
+
+
     for di in range(self.start_di, self.end_di):
       date = env.dates[di]
 
@@ -84,115 +195,17 @@ class CnBaseStd(Module):
       univ_all[di] = listing[di]
 
       try:
-
-        with gzip.open(raw_prc_path, 'rt') as f:
-          header_mp = read_header(f)
-          # str_fields = ["sid", "name", "sector", "ind", "subind", "exch", 'st', 'halt']
-
-          for raw_line in f:
-            line = read_line(raw_line, header_mp, float_fields = ["open", "close", "high", "low", "vol", "dvol", "sho", "flo", "pclose", "adj", 'up', 'down'])
-
-            sid = line["sid"]
-            if len(sid) != 9:
-              logging.fatal(f"sid {sid} error")
-            
-            ii = env.univ.find(sid)
-
-            if ii < 0 or sid.split('.')[1] not in ['SH', 'SZ']:
-              continue
-            open_arr[di, ii] = line["open"]
-            close_arr[di, ii] = line["close"]
-            high_arr[di, ii] = line["high"]
-            low_arr[di, ii] = line["low"]
-            vol_arr[di, ii] = line["vol"]
-            dvol_arr[di, ii] = line["dvol"]
-            vwap_arr[di, ii] = 0 if vol_arr[di, ii] == 0 else dvol_arr[di, ii] / vol_arr[di, ii]
-
-            sector = line["sector"]
-            industry = line["ind"]
-            subindustry = line["subind"]
-
-            cty_arr[di, ii] = 1
-            sector_arr[di, ii] = sector_idx.insert(sector)
-            industry_arr[di, ii] = industry_idx.insert(industry)
-            subindustry_arr[di, ii] = subindustry_idx.insert(subindustry)
-
-            sharesout_arr[di, ii] = line["sho"]
-            sharesfloat_arr[di, ii] = line["flo"]
-            cap_arr[di, ii] = sharesout_arr[di, ii] * line["pclose"]
-
-            adj_arr[di, ii] = line["adj"] if np.isfinite(line["adj"]) else 1.0
-            if di > 0:
-              if "pclose" in line:
-                adj_ = close_arr[di - 1, ii] / line["pclose"]
-                if np.abs(adj_arr[di, ii] - adj_) > 1e-5:
-                  logging.error(f"Invalid adj: {di} - {env.dates[di]}, {ii} - {env.univ[ii]}, {adj_arr[di, ii]}, {adj_}")
-              else:
-                pass
-            sid_name = line["name"]
-            st_pos = sid_name.find("ST")
-            if st_pos == -1:
-              st_arr[di, ii] = 0
-            else:
-              if st_pos > 2:
-                logging.warn(f"{sid_name}, {st_pos}, {len(sid_name)}")
-              st_arr[di, ii] = 1
-            if 'halt' in line:
-              halt_arr[di, ii] = int(line.get("halt", 0)) != 0
-            else:
-              halt_arr[di, ii] = 1 - int(line.get("active", 1))
-            if halt_arr[di, ii]:
-              univ_all[di, ii] = False
-            limit_up_arr[di, ii] = line["up"] 
-            limit_down_arr[di, ii] = line["down"]
-            exch = line["exch"]
-            if exch in exchanges:
-              exch_arr[di, ii] = exchanges[exch]
-            else:
-              logging.warn(f"Unknown exchange: {exch}")
-            
-            if indices.get(sid):
-              updated_idx += 1
-            else:
-              updated_stock += 1
-
+        x = write_stock_cache(raw_prc_path)
+        updated_stock += x[0]
+        updated_idx += x[1]
       except Exception as e:
         logging.error(f"Failed to load {raw_prc_path}: {e}")
 
       try:
-        with gzip.open(index_path, 'rt') as f:
-          header_mp = read_header(f)
-
-          for raw_line in f:
-            line = read_line(raw_line, header_mp, float_fields = ["open", "close", "high", "low", "vol", "dvol"])
-
-            iid = line["sid"]
-            if len(iid) != 9:
-              logging.fatal(f"sid {iid} error")
-            ii = env.univ.find(iid)
-            if ii < 0:
-              continue
-            open_arr[di, ii] = line["open"]
-            close_arr[di, ii] = line["close"]
-            high_arr[di, ii] = line["high"]
-            low_arr[di, ii] = line["low"]
-            vol_arr[di, ii] = line["vol"]
-            dvol_arr[di, ii] = line["dvol"]
-            vwap_arr[di, ii] = 0 if vol_arr[di, ii] == 0 else dvol_arr[di, ii] / vol_arr[di, ii]
-
-            cumadj_arr[di, ii] = 1
-            adj_arr[di, ii] = 1
-            univ_all[di, ii] = True
-
-            limit_up_arr[di, ii] = 99999999
-            limit_down_arr[di, ii] = 0
-
-            if indices.get(iid):
-              updated_idx += 1
+        updated_idx += write_index_cache(index_path)
       except Exception as e:
         logging.fatal(f"Failed to load {index_path}: {e}")
       logging.info(f"[{self.name}] [{date}] Loaded {updated_stock} stocks, {updated_idx} indices")
-
     sector_idx.save()
     industry_idx.save()
     subindustry_idx.save()
@@ -204,9 +217,6 @@ class CnBaseStd(Module):
     adj_low_arr = self.write_array("base/adj_low")
     adj_vol_arr = self.write_array("base/adj_vol", null_value=0)
     adj_vwap_arr = self.write_array("base/adj_vwap")
-
-    for ii in range(env.max_univ_size):
-      cumadj_arr[0, ii] = 1.0
 
     
     for di in range(self.start_di, self.end_di):

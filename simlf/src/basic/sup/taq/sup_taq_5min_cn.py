@@ -85,7 +85,6 @@ class SupTaq5minCn(Module):
       if idx_cnt < taq_sz:
         logging.error(f"missing idx taq on {date}: {idx_cnt} / {taq_sz}")
       logging.info(f"[{self.name}] Update information on date {self.dates[di]}. (finished {di + 1}/{self.dates_size})")
-      return
 
   def LoadFile(self, taq_date_path, di, taqi, is_idx):
     taq_path = taq_date_path.format(self.taq_times_[taqi])
@@ -96,8 +95,8 @@ class SupTaq5minCn(Module):
         logging.error(f"Missing {taq_path}")
         return False
     logging.info(f"Loading {taq_path}")
-    # try:
-    if True:
+    try:
+    # if True:
       with gzip.open(taq_path, 'rt') as f:
         header_mp = read_header(f)
         for raw_line in f:
@@ -146,7 +145,8 @@ class SupTaq5minCn(Module):
             self.i_adj_trd_cumvwap_[di, taqi, ii] = self.i_trd_cumvwap_[di, taqi, ii] * self.b_cumadj[di, ii]
             self.i_adj_trd_vol_[di, taqi, ii] = self.i_trd_vol_[di, taqi, ii] / self.b_cumadj[di, ii]
             self.i_adj_trd_vwap_[di, taqi, ii] = self.i_trd_vwap_[di, taqi, ii] * self.b_cumadj[di, ii]
-    # catch Exception as e:
-    #   logging.error(f"Failed to load {taq_path}: {e}")
+
+    except Exception as e:
+      logging.error(f"Failed to load {taq_path}: {e}")
     return True
 

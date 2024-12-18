@@ -91,7 +91,7 @@ def make_pipeline_grf(preprocess_config):
 
 
 def prepare_data(
-    phase_di, cache_dir, data_config, preprocess_config, features, seq_len, univ, univ_mask
+    phase_di, cache_dir, data_config, preprocess_config, features, seq_len, univ_len, univ_mask
 ):
     logging.info("prepare_data: %s", phase_di)
     preprocess_lookback = preprocess_config["lookback"]
@@ -102,7 +102,7 @@ def prepare_data(
     data_end_di = phase_di["valid"][1]
 
     univ_mask = univ_mask or data_config.get("univ")
-    filter_univ = load_univ(cache_dir, univ_mask, data_start_di, data_end_di, len(univ))
+    filter_univ = load_univ(cache_dir, univ_mask, data_start_di, data_end_di, univ_len)
 
     target = data_config["target"]
     # Load data
@@ -112,7 +112,7 @@ def prepare_data(
         y_path=target,
         start_di=data_start_di,
         end_di=data_end_di,
-        univ_size=len(univ),
+        univ_size=univ_len,
         filter_mask=filter_univ,
     )
 
@@ -330,6 +330,7 @@ def run(
         yaml.safe_dump(feature_yml, f)
 
     roll_dates = generate_roll_dates(start_date, end_date, data_config["roll_years"])
+
     if resume:
         all_roll_dates = roll_dates
         roll_dates = []
@@ -367,9 +368,10 @@ def run(
             preprocess_config,
             features,
             seq_len,
-            env.univ,
+            len(env.univ),
             univ,
         )
+        
         X_pipeline, Y_pipeline = make_pipeline(preprocess_config)
         can_preload_data = not X_pipeline.requires_fit() and not Y_pipeline.requires_fit()
 

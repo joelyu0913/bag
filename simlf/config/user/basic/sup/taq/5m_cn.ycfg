@@ -1,0 +1,7 @@
+py_mod(
+    name="sup_taq",
+    cls="basic.sup.taq.sup_taq_5min_cn.SupTaq5minCn",
+    stock_taq_path="$dataroot/prod/taq/%Y/%m/%d/{}.gz",
+    idx_taq_path="$dataroot/prod/taqidx/%Y/%m/%d/{}.gz",
+    ignore_missing=["0930", "1300"],
+)

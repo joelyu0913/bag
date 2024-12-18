@@ -1,8 +1,8 @@
 set -e
 source .env
 
-python src/cli/run.py --cfg config/region/daily.ycfg --cfg config/run/daily.sys.ycfg --cfg src/basic/sup/fret/ff.ycfg $*
-python src/cli/run.py --cfg config/region/daily.ycfg --cfg config/run/daily.user.ycfg --cfg src/user/kdr_py/ff_ml.ycfg -t 16  $*
+# python src/cli/run.py --cfg config/region/daily.ycfg --cfg config/run/daily.sys.ycfg --cfg src/basic/sup/fret/ff.ycfg $*
+# python src/cli/run.py --cfg config/region/daily.ycfg --cfg config/run/daily.user.ycfg --cfg src/user/kdr_py/ff_ml.ycfg -t 16  $*
 
 sys_cache=tmp/cache/cn/sys
 user_cache=tmp/cache/cn/user
@@ -17,4 +17,4 @@ for i in {0..0}; do
     --random-state $i
 done
 
-python src/cli/run.py --cfg config/region/daily.ycfg --cfg config/run/daily.user.ycfg --cfg src/user/M/M_lgbm.ycfg -t 16 $*
+# python src/cli/run.py --cfg config/region/daily.ycfg --cfg config/run/daily.user.ycfg --cfg src/user/M/M_lgbm.ycfg -t 16 $*
